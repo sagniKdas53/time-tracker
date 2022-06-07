@@ -1,1 +1,7 @@
 venv
+checkpoint
+model.tflearn.*
+*.pkl
+*.pickle
+training_data
+tflearn_logs
