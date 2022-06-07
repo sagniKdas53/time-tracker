@@ -1,12 +1,15 @@
-from flask import Flask, render_template, request
-import random
 import json
-from keras.models import load_model
-import numpy as np
+import os
 import pickle
-from nltk.stem import WordNetLemmatizer
+import random
+
 import nltk
-nltk.download('popular')
+import numpy as np
+from flask import Flask, make_response, request, send_from_directory
+from keras.models import load_model
+from nltk.stem import WordNetLemmatizer
+
+# nltk.download('popular')
 lemmatizer = WordNetLemmatizer()
 
 model = load_model('model.h5')
@@ -75,16 +78,23 @@ app = Flask(__name__)
 app.static_folder = 'static'
 
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 
-@app.route("/get")
+@app.route("/api/send", methods=['POST'])
 def get_bot_response():
-    userText = request.args.get('msg')
-    return chatbot_response(userText)
+    data = request.get_json()
+    resp = chatbot_response(data['body'])
+    print(f"User: {data['body']}")
+    print(f"Bot: {resp}")
+    return make_response({'results': resp})
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
