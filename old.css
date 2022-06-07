@@ -1,0 +1,25 @@
+li {
+    list-style-type: none;
+    list-style-position: outside;
+    background-color: rgb(188, 255, 64);
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    border-radius: 10px;
+    padding-left: 1vw;
+    padding-right: 1vw;
+  }
+  
+  li.bot {
+    float: left;
+  }
+  
+  li.user {
+    background-color: rgb(64, 255, 230);
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    border-radius: 10px;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    float: right;
+    width: 100%;
+  }

@@ -46,7 +46,7 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 
 ## TODO
 
-- [ ] Make the webpage
+- [X] Make the webpage
 - [ ] Find all the user inputs and the responses that I will need to feed into the training
 - [ ] Training and test the model
 - [ ] Find out how to use tensor flow to call function

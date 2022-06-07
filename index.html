@@ -20,22 +20,23 @@
   <div class="container">
     <div class="row align-items-start m-0">
       <div class="col invisible">One of three columns</div>
-      <div class="col">
-        <nav class="navbar navbar-dark bg-dark">
+      <div class="col m-0 p-0">
+        <nav class="navbar navbar-dark bg-dark" id="chat-header">
           <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">Chats</span>
           </div>
         </nav>
         <div class="bg-light" id="chat-box">
-          <div class="bg-light">
-            <div class="invisible">some stuff</div>
-          </div>
-          <ol id="chat-list">
-            <li class="bot">Hi! I am Koroni bot</li>
-            <li class="bot">I help you to keep your time-sheets in order</li>
+          <ol id="chat-list" class="list-group">
+            <li class="list-group-item list-group-item-success bot">
+              Hi! I am Koroni bot
+            </li>
+            <li class="list-group-item list-group-item-success bot">
+              I help you to keep your time-sheets in order
+            </li>
           </ol>
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group" id="chat-footer">
           <input type="text" class="form-control" placeholder="Enter your message" aria-label="Enter your message"
             aria-describedby="button-addon2" id="chat-text" />
           <button class="btn btn-info" type="button" id="button-addon2" onclick="adduserMsg()">
