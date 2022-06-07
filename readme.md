@@ -40,17 +40,11 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 
     It will use the cookie to retrive the users time-sheet filling up progress and also the leaves.
 
-## Caution
-
-The bot uses tensorflow and will not work on low end devices [As a host], it is accessibe by almost all modern devices.
-
----
-
 ## Libraries Used
 
  Not Finalized yet.
 
-## TODO:
+## TODO
 
 - [ ] Make the webpage
 - [ ] Find all the user inputs and the responses that I will need to feed into the training
@@ -58,4 +52,8 @@ The bot uses tensorflow and will not work on low end devices [As a host], it is 
 - [ ] Find out how to use tensor flow to call function
 - [ ] Find out how to extract the paramerts form the message and then use them to fill the data like `{Hours},{Reason},{Days}`
 - [ ] Make an error message response if the user didn't provide the correct type of data
-- [ ] Make the bot await user data like if the user sends `Give_attendance` but no `{Hours}` are mentioned send a response askin to send the hours.
+- [ ] Make the bot await user data like if the user sends `Give_attendance` but no `{Hours}` are mentioned send a response asking to send the hours.
+
+## Caution
+
+The bot uses tensorflow and will not work on low end devices [As a host], it is accessibe by almost all modern devices.
