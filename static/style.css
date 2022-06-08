@@ -30,28 +30,41 @@ li.bot {
   margin-top: 1vh;
   list-style: none;
   list-style-position: outside;
-  background-color: rgb(208, 138, 229);
+  /*background-color: rgb(208, 138, 229);*/
 }
 li.bot div {
   background-color: rgb(158, 201, 191);
   color: black;
   margin-top: inherit !important;
   border-radius: 5px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  padding: 10px;
 }
 
 li.user {
   text-align: right;
+  /*if this is left the smaller 
+  texts go to the other side*/
   margin-top: 1vh;
   list-style: none;
   list-style-position: outside;
   padding-right: 2vw;
-  background-color: rgb(252, 240, 74);
+  /*background-color: rgb(252, 240, 74);*/
 }
 li.user div {
   background-color: rgb(166, 207, 150);
   color: black;
   margin-top: inherit !important;
   border-radius: 5px;
+  display: inline-flex;
+  block-size: 60%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  padding: 10px;
 }
 
 body {

@@ -1,8 +1,15 @@
-const url = 'http://127.0.0.1:5000/'
+const url = 'http://127.0.0.1:5000/';
+
+function keyEvent(event) {
+    event.preventDefault();
+    if (event.key == 'Enter') {
+        adduserMsg();
+    }
+}
 
 function first_visit() {
     var msgSpan = document.createElement('div')
-    msgSpan.innerHTML = 'Hi! I am Koroni bot';
+    msgSpan.innerHTML = 'Hi! I am Kronii bot';
     var ul = document.getElementById("chat-list");
     var li = document.createElement("li");
     li.appendChild(msgSpan);
@@ -10,6 +17,13 @@ function first_visit() {
     ul.appendChild(li);
     var msgSpan = document.createElement('div')
     msgSpan.innerHTML = 'I help you to keep your time-sheets in order';
+    var ul = document.getElementById("chat-list");
+    var li = document.createElement("li");
+    li.appendChild(msgSpan);
+    li.setAttribute('class', 'bot')
+    ul.appendChild(li);
+    var msgSpan = document.createElement('div')
+    msgSpan.innerHTML = 'Send a message as !register to start registration';
     var ul = document.getElementById("chat-list");
     var li = document.createElement("li");
     li.appendChild(msgSpan);
@@ -69,9 +83,11 @@ async function adduserMsg() {
 async function addbotMsg(msg) {
     var text = document.getElementById("chat-text").value;
     if (text) {
+        var msgSpan = document.createElement('div')
+        msgSpan.innerHTML = msg;
         var ul = document.getElementById("chat-list");
         var li = document.createElement("li");
-        li.appendChild(document.createTextNode(msg));
+        li.appendChild(msgSpan);
         li.setAttribute('class', 'bot')
         ul.appendChild(li);
     }
