@@ -25,16 +25,33 @@
   background: rgb(0, 0, 0);
   border-radius: 5px;
 }
-
-
 li.bot {
-  text-align: right;
+  text-align: left;
   margin-top: 1vh;
+  list-style: none;
+  list-style-position: outside;
+  background-color: rgb(208, 138, 229);
+}
+li.bot div {
+  background-color: rgb(158, 201, 191);
+  color: black;
+  margin-top: inherit !important;
+  border-radius: 5px;
 }
 
 li.user {
-  text-align: left;
+  text-align: right;
   margin-top: 1vh;
+  list-style: none;
+  list-style-position: outside;
+  padding-right: 2vw;
+  background-color: rgb(252, 240, 74);
+}
+li.user div {
+  background-color: rgb(166, 207, 150);
+  color: black;
+  margin-top: inherit !important;
+  border-radius: 5px;
 }
 
 body {

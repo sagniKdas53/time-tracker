@@ -1,11 +1,15 @@
+import datetime
 import json
 import os
 import pickle
 import random
+import uuid
 
 import nltk
 import numpy as np
 from flask import Flask, make_response, request, send_from_directory
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
 
@@ -76,6 +80,57 @@ def chatbot_response(msg):
 
 app = Flask(__name__)
 app.static_folder = 'static'
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
+# os.environ['URI']
+app.config['SECRET_KEY'] = "1b308e20a6f3193e43c021bb1412808f"
+# os.environ['SECRET']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
+
+class chat(db.Model):
+    id = db.Column(db.String(200), primary_key=True)
+    message = db.Column(db.Text)
+    user = db.Column(db.String(200), db.ForeignKey("user_db.id"))
+    response = db.Column(db.Text)
+    time_asked = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'User ID: {self.user}\nmessage: {self.message}\nresponse: {self.response}'
+
+    def __init__(self, id, message, user, asked_on, response):
+        self.id = id
+        self.message = message
+        self.response = response
+        self.user = user
+        self.time_asked = asked_on
+
+
+class user_db(db.Model):
+    id = db.Column(db.String(200), primary_key=True)
+    admin = db.Column(db.Boolean)
+    name = db.Column(db.String(200))
+    email = db.Column(db.String(100))
+    username = db.Column(db.String(200))
+    password = db.Column(db.String(200))
+
+    def __repr__(self):
+        return f'User Name: {self.username}\nEmail: {self.email}\
+            \nAdmin: {bool(self.admin)}'
+
+    def __init__(self, id, name, email, username, password, admin=False):
+        self.username = username
+        self.email = email
+        self.name = name
+        self.password = password
+        self.id = id
+        self.admin = admin
+
+
+db.create_all()
 
 
 @app.route('/', defaults={'path': ''})
