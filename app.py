@@ -75,7 +75,7 @@ def getResponse(ints, intents_json):
 def chatbot_response(msg):
     ints = predict_class(msg, model)
     res = getResponse(ints, intents)
-    return res
+    return res, ints
 
 
 app = Flask(__name__)
@@ -145,10 +145,15 @@ def serve(path):
 @app.route("/api/send", methods=['POST'])
 def get_bot_response():
     data = request.get_json()
-    resp = chatbot_response(data['body'])
-    print(f"User: {data['body']}")
-    print(f"Bot: {resp}")
-    return make_response({'results': resp})
+    resposne, class_of_resp = chatbot_response(data['body'])
+    print(f"\nUser: {data['body']}\nBot:\
+        {resposne}\nClass: {class_of_resp}\n")
+    '''words = clean_up_sentence(data['body'])
+    print(words)'''
+    return make_response({
+        'results': resposne,
+        'class': class_of_resp
+    })
 
 
 if __name__ == "__main__":

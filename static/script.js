@@ -90,6 +90,7 @@ async function addbotMsg(msg) {
         li.appendChild(msgSpan);
         li.setAttribute('class', 'bot')
         ul.appendChild(li);
+        li.scrollIntoView({behavior: "smooth"});
     }
 }
 
