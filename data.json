@@ -9,12 +9,7 @@
         "Is anyone there?",
         "Hey",
         "Hey there",
-        "Hello",
-        "Good day",
-        "Good Morning",
-        "Good Evening",
-        "Good Night",
-        "Good Noon"
+        "Hello"
       ],
       "responses": [
         "Hello, thanks for asking",
@@ -47,11 +42,12 @@
         "Thanks for helping me"
       ],
       "responses": ["Happy to help!", "Any time!", "My pleasure"],
-      "context_set": [""]
+      "context_set": [""],
+      "context_filter": [""]
     },
     {
       "tag": "noanswer",
-      "patterns": [],
+      "patterns": [""],
       "responses": [
         "Sorry, can't understand you",
         "Please give me more info",
@@ -75,7 +71,7 @@
       "responses": [
         "I can help you fill your time-sheets and give attendance directly",
         "Offering support for tracking and submitting attendance",
-        "I can give attendance, apply for overtime and apply foe leaves"
+        "I can give attendance, apply for overtime and apply for leaves"
       ],
       "context_set": [""],
       "context_filter": [""]
@@ -87,9 +83,12 @@
         "Show my attendance",
         "What is my attendance percent?",
         "What is my attendance %?",
-        ""
+        "Show my performance"
       ],
-      "responses": ["Navigating to attendance tracker"],
+      "responses": [
+        "Navigating to attendance tracker",
+        "Attendance tracker: loading"
+      ],
       "context_set": ["attendance_tracker"],
       "context_filter": [""]
     },
@@ -99,9 +98,13 @@
         "Submit todays attendance",
         "Give todays attendance",
         "Attended today",
+        "attendance today",
         "Did a good day of work"
       ],
-      "responses": ["Trying to submit todays attendance"],
+      "responses": [
+        "Trying to submit todays attendance",
+        "Giving todays attendance please wait"
+      ],
       "context_set": ["attendance_submit"],
       "context_filter": ["attendance_tracker"]
     },
@@ -112,7 +115,10 @@
         "Give todays leave",
         "Apply_leave today"
       ],
-      "responses": ["Trying to submit todays leave"],
+      "responses": [
+        "Trying to submit todays leave",
+        "Giving todays leave please wait"
+      ],
       "context_set": ["leave_submit"],
       "context_filter": ["attendance_tracker"]
     },
@@ -124,9 +130,81 @@
         "OOD submit today",
         "Did a OOD today"
       ],
-      "responses": ["Trying to submit todays OOD"],
+      "responses": [
+        "Trying to submit todays OOD",
+        "Giving todays OOD please wait"
+      ],
       "context_set": ["OOD_submit"],
       "context_filter": ["attendance_tracker"]
+    },
+    {
+      "tag": "display_user_info",
+      "patterns": [
+        "Show user info",
+        "Who am I",
+        "Show my info",
+        "Who is logged in"
+      ],
+      "responses": ["Showing user info", "Retriving user info"],
+      "context_set": ["OOD_submit"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "register",
+      "patterns": ["register me", "register", "add me", "add user"],
+      "responses": ["Starting Registartion", "Registeration Started"],
+      "context_set": ["user_register"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "undo",
+      "patterns": ["stop that", "stop", "undo", "cancel", "cancel that"],
+      "responses": ["Undoing last command", "Cancelling last command"],
+      "context_set": ["undo_command"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "give_OOD_many_no_reason",
+      "patterns": ["OOD for", "Give OOD for"],
+      "responses": ["Please give a reason"],
+      "context_set": ["OOD_many_no_reason"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "give_OOD_many_reason",
+      "patterns": ["OOD for because of", "Give OOD for because of"],
+      "responses": ["Processing OOD"],
+      "context_set": ["OOD_many_reason"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "give_reason",
+      "patterns": [
+        "I have to",
+        "I need to",
+        "because of",
+        "due to",
+        "need",
+        "want",
+        "necessary"
+      ],
+      "responses": ["Processing responses"],
+      "context_set": ["reasoner"],
+      "context_filter": ["OOD_many_no_reason", "leave_many_no_reason"]
+    },
+    {
+      "tag": "give_leave_many_no_reason",
+      "patterns": ["leave for", "Give leave for"],
+      "responses": ["Please give a reason"],
+      "context_set": ["leave_many_no_reason"],
+      "context_filter": [""]
+    },
+    {
+      "tag": "give_leave_many_reason",
+      "patterns": ["leave for because of", "Give leave for because of"],
+      "responses": ["Processing leave"],
+      "context_set": ["leave_many_reason"],
+      "context_filter": [""]
     }
   ]
 }

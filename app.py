@@ -146,8 +146,8 @@ def serve(path):
 def get_bot_response():
     data = request.get_json()
     resposne, class_of_resp = chatbot_response(data['body'])
-    print(f"\nUser: {data['body']}\nBot:\
-        {resposne}\nClass: {class_of_resp}\n")
+    print(f"\nUser: {data['body']}\n\
+        Bot:{resposne}\nClass: {class_of_resp}\n")
     '''words = clean_up_sentence(data['body'])
     print(words)'''
     return make_response({
