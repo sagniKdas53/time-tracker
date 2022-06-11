@@ -66,7 +66,8 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 - [ ] Find out how to extract the paramerts form the message and then use them to fill the data like `{Hours},{Reason},{Days}`
 - [ ] Make an error message response if the user didn't provide the correct type of data
 - [ ] Make the bot await user data like if the user sends `Give attendance` but no `{Hours}` are mentioned send a response asking to send the hours.
-
+- [ ] { "todo": ["Make for days too","Make the js to show the intents and classes", "Integrate the DB","Make inline message forms"] }
+  
 ## Caution
 
 The bot uses tensorflow and will not work on low end devices [As a host], it is accessibe by almost all modern devices.

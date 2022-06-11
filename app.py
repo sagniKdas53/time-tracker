@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
 
-# nltk.download('popular')
+nltk.download('popular')
 lemmatizer = WordNetLemmatizer()
 
 model = load_model('model.h5')
@@ -142,18 +142,47 @@ def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 
-@app.route("/api/send", methods=['POST'])
+@app.route("/api/register", methods=['POST'])
+def bot_register():
+    data = request.get_json()
+    resposne, class_of_resp = chatbot_response(data['body'])
+    print(f"\nUser: {data['body']}")
+    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
+    '''words = clean_up_sentence(data['body'])
+    print(words)'''
+    if class_of_resp[0]['intent'] == 'register':
+        return make_response({
+            'results': resposne,
+            'class': class_of_resp,
+            'do': 'register'
+        })
+    else:
+        return make_response({
+            'results': resposne,
+            'class': class_of_resp,
+            'do': 'nothing'
+        })
+
+@app.route("/api/chat", methods=['POST'])
 def get_bot_response():
     data = request.get_json()
     resposne, class_of_resp = chatbot_response(data['body'])
-    print(f"\nUser: {data['body']}\n\
-        Bot:{resposne}\nClass: {class_of_resp}\n")
+    print(f"\nUser: {data['body']}")
+    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
     '''words = clean_up_sentence(data['body'])
     print(words)'''
-    return make_response({
-        'results': resposne,
-        'class': class_of_resp
-    })
+    if class_of_resp[0]['intent'] == 'register':
+        return make_response({
+            'results': resposne,
+            'class': class_of_resp,
+            'do': 'register'
+        })
+    else:
+        return make_response({
+            'results': resposne,
+            'class': class_of_resp,
+            'do': 'nothing'
+        })
 
 
 if __name__ == "__main__":

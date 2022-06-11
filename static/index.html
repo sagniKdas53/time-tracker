@@ -12,7 +12,7 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css" />
-  <!--<script type="text/javascript" src="https://livejs.com/live.js"></script>-->
+  <script type="text/javascript" src="https://livejs.com/live.js"></script><!---->
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
   <script type="text/javascript" src="script.js"></script>
   <!--Favicons-->
@@ -28,7 +28,7 @@
 <body onload="cooker()">
   <div class="container">
     <div class="row align-items-start m-0">
-      <div class="col invisible d-none d-lg-block">One of three columns</div>
+      <div class="col d-none d-lg-block"></div>
       <div class="col m-0 p-0">
         <nav class="navbar navbar-dark bg-dark" id="chat-header">
           <div class="container-fluid">
@@ -47,7 +47,24 @@
           </button>
         </div>
       </div>
-      <div class="col invisible d-none d-md-block">One of three columns</div>
+      <div class="col d-none d-md-block">
+        <div class="row">
+          <div class="col">
+            <h2>Intent: </h2>
+          </div>
+          <div class="col">
+            <h2 id="intent-broadcast">placeholder</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h2>Classes: </h2>
+          </div>
+          <div class="col">
+            <h2 id="class-broadcast">placeholder</h2>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>

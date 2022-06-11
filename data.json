@@ -16,7 +16,7 @@
         "Glad to see you here",
         "Hi there, how can I help?"
       ],
-      "context_set": [""],
+      "context_set": ["unspecified"],
       "context_filter": [""]
     },
     {
@@ -29,7 +29,7 @@
         "Till next time"
       ],
       "responses": ["See you!", "Have a nice day", "Bye! Come back again soon"],
-      "context_set": [""],
+      "context_set": ["unspecified"],
       "context_filter": [""]
     },
     {
@@ -39,10 +39,13 @@
         "Thank you",
         "That's helpful",
         "Awesome, thanks",
-        "Thanks for helping me"
+        "Thanks for helping",
+        "Thanks for the help",
+        "understandable have a nice day",
+        "Have a nice day"
       ],
       "responses": ["Happy to help!", "Any time!", "My pleasure"],
-      "context_set": [""],
+      "context_set": ["unspecified"],
       "context_filter": [""]
     },
     {
@@ -54,7 +57,7 @@
         "Not sure I understand"
       ],
       "context_set": [""],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "options",
@@ -66,14 +69,15 @@
         "What support is offered",
         "What are your features",
         "Tell me what you can do",
-        "Features list"
+        "Features list",
+        "help"
       ],
       "responses": [
         "I can help you fill your time-sheets and give attendance directly",
         "Offering support for tracking and submitting attendance",
         "I can give attendance, apply for overtime and apply for leaves"
       ],
-      "context_set": [""],
+      "context_set": ["unspecified"],
       "context_filter": [""]
     },
     {
@@ -90,7 +94,7 @@
         "Attendance tracker: loading"
       ],
       "context_set": ["attendance_tracker"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "give_attendance_today",
@@ -106,7 +110,7 @@
         "Giving todays attendance please wait"
       ],
       "context_set": ["attendance_submit"],
-      "context_filter": ["attendance_tracker"]
+      "context_filter": ["attendance_tracker", "unspecified"]
     },
     {
       "tag": "give_leave_today",
@@ -120,7 +124,7 @@
         "Giving todays leave please wait"
       ],
       "context_set": ["leave_submit"],
-      "context_filter": ["attendance_tracker"]
+      "context_filter": ["attendance_tracker", "unspecified"]
     },
     {
       "tag": "give_OOD_today",
@@ -135,7 +139,7 @@
         "Giving todays OOD please wait"
       ],
       "context_set": ["OOD_submit"],
-      "context_filter": ["attendance_tracker"]
+      "context_filter": ["attendance_tracker", "unspecified"]
     },
     {
       "tag": "display_user_info",
@@ -147,35 +151,35 @@
       ],
       "responses": ["Showing user info", "Retriving user info"],
       "context_set": ["OOD_submit"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "register",
       "patterns": ["register me", "register", "add me", "add user"],
       "responses": ["Starting Registartion", "Registeration Started"],
       "context_set": ["user_register"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "undo",
       "patterns": ["stop that", "stop", "undo", "cancel", "cancel that"],
       "responses": ["Undoing last command", "Cancelling last command"],
       "context_set": ["undo_command"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "give_OOD_many_no_reason",
       "patterns": ["OOD for", "Give OOD for"],
       "responses": ["Please give a reason"],
       "context_set": ["OOD_many_no_reason"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "give_OOD_many_reason",
       "patterns": ["OOD for because of", "Give OOD for because of"],
       "responses": ["Processing OOD"],
       "context_set": ["OOD_many_reason"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "give_reason",
@@ -197,14 +201,46 @@
       "patterns": ["leave for", "Give leave for"],
       "responses": ["Please give a reason"],
       "context_set": ["leave_many_no_reason"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
     },
     {
       "tag": "give_leave_many_reason",
       "patterns": ["leave for because of", "Give leave for because of"],
       "responses": ["Processing leave"],
       "context_set": ["leave_many_reason"],
-      "context_filter": [""]
+      "context_filter": ["unspecified"]
+    },
+    {
+      "tag": "time_intents",
+      "patterns": [
+        "time now",
+        "what is the time now",
+        "current time",
+        "show time",
+        "what time is it?"
+      ],
+      "responses": [
+        "Let the javascript handel it [Will add later]",
+        "Look it up yourself",
+        "Checking it won't make it happen faster"
+      ],
+      "context_set": ["unspecified"],
+      "context_filter": ["unspecified"]
+    },
+    {
+      "tag": "time_deltas",
+      "patterns": [
+        "time in hours",
+        "what will be the time in hours",
+        "time after hours"
+      ],
+      "responses": [
+        "Let the javascript handel it [Will add later]",
+        "Look it up yourself",
+        "Time deltas are amazing"
+      ],
+      "context_set": ["unspecified"],
+      "context_filter": ["unspecified"]
     }
   ]
 }
