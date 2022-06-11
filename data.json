@@ -161,6 +161,13 @@
       "context_filter": ["unspecified"]
     },
     {
+      "tag": "login",
+      "patterns": ["login", "want to login", "let me in", "sign in"],
+      "responses": ["Logging you in", "Loggin in"],
+      "context_set": ["user_login"],
+      "context_filter": ["unspecified"]
+    },
+    {
       "tag": "undo",
       "patterns": ["stop that", "stop", "undo", "cancel", "cancel that"],
       "responses": ["Undoing last command", "Cancelling last command"],

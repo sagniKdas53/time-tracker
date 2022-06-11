@@ -145,44 +145,63 @@ def serve(path):
 @app.route("/api/register", methods=['POST'])
 def bot_register():
     data = request.get_json()
-    resposne, class_of_resp = chatbot_response(data['body'])
-    print(f"\nUser: {data['body']}")
-    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
-    '''words = clean_up_sentence(data['body'])
-    print(words)'''
-    if class_of_resp[0]['intent'] == 'register':
+    # resposne, class_of_resp = chatbot_response(data['body'])
+    if data['action'] == 'register':
         return make_response({
-            'results': resposne,
-            'class': class_of_resp,
-            'do': 'register'
+            'name': data['name'],
+            'email': data['email'],
+            'password': data['password'],
+            'status': 'done'
         })
     else:
         return make_response({
-            'results': resposne,
-            'class': class_of_resp,
-            'do': 'nothing'
+            'name': data['name'],
+            'email': data['email'],
+            'password': data['password'],
+            'status': 'fail'
         })
+
+
+@app.route("/api/login", methods=['POST'])
+def bot_login():
+    data = request.get_json()
+    if data['action'] == 'login':
+        return make_response({
+            'email': data['email'],
+            'password': data['password'],
+            'status': 'done'
+        })
+    else:
+        return make_response({
+            'email': data['email'],
+            'password': data['password'],
+            'status': 'fail'
+        })
+
 
 @app.route("/api/chat", methods=['POST'])
 def get_bot_response():
     data = request.get_json()
-    resposne, class_of_resp = chatbot_response(data['body'])
+    # print(data)
+    '''
+    this is hacky and not a good way to do this but i can't think of a better way,
+    alternative ly maybe simplyfying the reasoner isn't a bad idea if the user need
+    to do something givving full commands is to be expected.
+
+    Also add the db tracker
+    '''
+    if data['isreason']: 
+        reasonFor = data['reasonfor']
+        resposne, class_of_resp = 'accepted resposne for ' + \
+            reasonFor, [{"intent": 'give_reason', "probability": '1.00'}]
+    else:
+        resposne, class_of_resp = chatbot_response(data['body'])
     print(f"\nUser: {data['body']}")
     print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
-    '''words = clean_up_sentence(data['body'])
-    print(words)'''
-    if class_of_resp[0]['intent'] == 'register':
-        return make_response({
-            'results': resposne,
-            'class': class_of_resp,
-            'do': 'register'
-        })
-    else:
-        return make_response({
-            'results': resposne,
-            'class': class_of_resp,
-            'do': 'nothing'
-        })
+    return make_response({
+        'results': resposne,
+        'class': class_of_resp,
+    })
 
 
 if __name__ == "__main__":
