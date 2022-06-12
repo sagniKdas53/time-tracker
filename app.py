@@ -3,6 +3,7 @@ import json
 import os
 import pickle
 import random
+import re
 import uuid
 
 import nltk
@@ -12,8 +13,10 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
+from werkzeug.security import check_password_hash, generate_password_hash
+import jwt
 
-nltk.download('popular')
+# nltk.download('popular')
 lemmatizer = WordNetLemmatizer()
 
 model = load_model('model.h5')
@@ -145,19 +148,37 @@ def serve(path):
 @app.route("/api/register", methods=['POST'])
 def bot_register():
     data = request.get_json()
+    print(data)
     # resposne, class_of_resp = chatbot_response(data['body'])
-    if data['action'] == 'register':
-        return make_response({
-            'name': data['name'],
-            'email': data['email'],
-            'password': data['password'],
-            'status': 'done'
-        })
+    if data['action'] == 'register' and data['password'] and data['email'] and data['name']:
+        hashed_password = generate_password_hash(
+            data['password'], method='sha256')
+        email = user_db.query.filter_by(email=data['email']).first()
+        if email:
+            return make_response({
+                'name': data['name'],
+                'email': data['email'],
+                'status': "the email has been already registered"
+            })
+        else:
+            try:
+                new_user = user_db(id=str(uuid.uuid4()), name=data['name'], email=data['email'],
+                                   password=hashed_password, admin=False, username=data['name'])
+                db.session.add(new_user)
+                db.session.commit()
+                return make_response({
+                    'name': data['name'],
+                    'email': data['email'],
+                    'status': 'done'
+                })
+            except Exception as e:
+                return make_response({
+                    'name': data['name'],
+                    'email': data['email'],
+                    'status': e
+                })
     else:
         return make_response({
-            'name': data['name'],
-            'email': data['email'],
-            'password': data['password'],
             'status': 'fail'
         })
 
@@ -165,18 +186,18 @@ def bot_register():
 @app.route("/api/login", methods=['POST'])
 def bot_login():
     data = request.get_json()
-    if data['action'] == 'login':
-        return make_response({
-            'email': data['email'],
-            'password': data['password'],
-            'status': 'done'
-        })
+    if not data or not data['email'] or not data['password'] or data['action'] != 'login':
+        return make_response('could not verify', 401, {'status': 'login info required"'})
     else:
-        return make_response({
-            'email': data['email'],
-            'password': data['password'],
-            'status': 'fail'
-        })
+        user_ent = user_db.query.filter_by(email=data['email']).first()
+        # print(f'user_ent.id={user_ent.id}')
+        if check_password_hash(user_ent.password, data['password']):
+            token = jwt.encode({'id': str(user_ent.id), 'exp': datetime.datetime.utcnow(
+            ) + datetime.timedelta(days=7)}, app.config['SECRET_KEY'], "HS256")
+            print(token)
+            return make_response({'email': str(user_ent.email), 'token': token, 'status': 'done'})
+        else:
+            return make_response({'email': str(user_ent.email), 'status': "Incorrect password"})
 
 
 @app.route("/api/chat", methods=['POST'])
@@ -190,7 +211,7 @@ def get_bot_response():
 
     Also add the db tracker
     '''
-    if data['isreason']: 
+    if data['isreason']:
         reasonFor = data['reasonfor']
         resposne, class_of_resp = 'accepted resposne for ' + \
             reasonFor, [{"intent": 'give_reason', "probability": '1.00'}]

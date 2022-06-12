@@ -1,7 +1,7 @@
 const url = "http://127.0.0.1:5000/";
 var nextIsReason = false;
 var reasonFor = "";
-
+var tokenID = ""
 function keyEvent(event) {
     event.preventDefault();
     if (event.key == "Enter") {
@@ -68,7 +68,7 @@ async function regcmp() {
             const element = document.getElementById("rForm");
             element.remove();
         } else {
-            addbotMsgRTL("Try again");
+            addbotMsgRTL(res["status"]);
         }
     } catch (err) {
         console.error(`ERROR: ${err}`);
@@ -94,7 +94,7 @@ async function loginHandel() {
     var pword = document.getElementById("InputPassword1").value;
     //console.log(email, pword);
 
-    addbotMsgRTL("Logging you in");
+    //addbotMsgRTL("Logging you in");
     try {
         // Create request to api service
         const req = await fetch(url + "api/login", {
@@ -116,14 +116,15 @@ async function loginHandel() {
 
         // Log success message
         console.log(res);
-        if (res["status"] == "done") {
+        if (res["status"] == "done" && res['token'] != null) {
             addbotMsgRTL("Done");
             const element = document.getElementById("lForm");
             element.remove();
             // this will be set in the login handler
             Cookies.set("signed_in", "True", { expires: 7 });
+            Cookies.set("token", res['token'], { expires: 7 });
         } else {
-            addbotMsgRTL("Try again");
+            addbotMsgRTL(res["status"]);
         }
     } catch (err) {
         console.error(`ERROR: ${err}`);
@@ -226,8 +227,8 @@ function addbotMsgRTL(msg) {
 }
 
 function cooker() {
-    if (Cookies.get("signed_in")) {
-        //Cookies.set('first_visit', 'False', { expires: 7 });
+    if (Cookies.get('token')) {
+        tokenID = Cookies.get('token');
         other_visit();
     } else {
         first_visit();
