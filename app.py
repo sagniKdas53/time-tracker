@@ -1,9 +1,9 @@
+from cmath import exp
 import datetime
 import json
 import os
 import pickle
 import random
-import re
 import uuid
 
 import nltk
@@ -94,22 +94,24 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 
-class chat(db.Model):
+class conversation(db.Model):
     id = db.Column(db.String(200), primary_key=True)
     message = db.Column(db.Text)
     user = db.Column(db.String(200), db.ForeignKey("user_db.id"))
     response = db.Column(db.Text)
-    time_asked = db.Column(db.DateTime)
+    probabilities = db.Column(db.Text)
+    time = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'User ID: {self.user}\nmessage: {self.message}\nresponse: {self.response}'
 
-    def __init__(self, id, message, user, asked_on, response):
+    def __init__(self, id, message, user, time, response, probability):
         self.id = id
         self.message = message
         self.response = response
         self.user = user
-        self.time_asked = asked_on
+        self.time = time
+        self.probabilities = probability
 
 
 class user_db(db.Model):
@@ -203,22 +205,22 @@ def bot_login():
 @app.route("/api/chat", methods=['POST'])
 def get_bot_response():
     data = request.get_json()
-    # print(data)
-    '''
-    this is hacky and not a good way to do this but i can't think of a better way,
-    alternative ly maybe simplyfying the reasoner isn't a bad idea if the user need
-    to do something givving full commands is to be expected.
-
-    Also add the db tracker
-    '''
-    if data['isreason']:
-        reasonFor = data['reasonfor']
-        resposne, class_of_resp = 'accepted resposne for ' + \
-            reasonFor, [{"intent": 'give_reason', "probability": '1.00'}]
-    else:
-        resposne, class_of_resp = chatbot_response(data['body'])
+    resposne, class_of_resp = chatbot_response(data['body'])
     print(f"\nUser: {data['body']}")
     print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
+    try:
+        token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
+        usr = token['id']
+        expiry = token['exp']
+        if round(datetime.datetime.now().timestamp()) > expiry:
+            resposne = 'please re login'
+    except jwt.exceptions.DecodeError as e:
+        usr = 'anonymous'
+        print(e)
+    conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=resposne,
+                        user=usr, time=datetime.datetime.now(), probability=json.dumps(class_of_resp))
+    db.session.add(conv)
+    db.session.commit()
     return make_response({
         'results': resposne,
         'class': class_of_resp,

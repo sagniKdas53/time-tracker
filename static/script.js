@@ -120,14 +120,24 @@ async function loginHandel() {
             addbotMsgRTL("Done");
             const element = document.getElementById("lForm");
             element.remove();
-            // this will be set in the login handler
-            Cookies.set("signed_in", "True", { expires: 7 });
+            // cookies set
             Cookies.set("token", res['token'], { expires: 7 });
         } else {
             addbotMsgRTL(res["status"]);
         }
     } catch (err) {
         console.error(`ERROR: ${err}`);
+    }
+}
+
+
+async function logOutHandel() {
+    if (Cookies.get('token')) {
+        tokenID = '';
+        Cookies.remove('token');
+        addbotMsgRTL('Logged Out');
+    } else {
+        addbotMsgRTL('You are not signed in');
     }
 }
 
@@ -167,13 +177,10 @@ async function adduserMsg() {
                 // format the data
                 body: JSON.stringify({
                     body: text,
-                    isreason: nextIsReason,
-                    reasonfor: reasonFor
+                    token: tokenID
                 }),
             });
 
-            nextIsReason = false;
-            reasonFor = '';
             const res = await req.json();
 
             // Log success message
@@ -184,14 +191,10 @@ async function adduserMsg() {
             if (res["class"][0]["intent"] == "login") {
                 login();
             }
-            if (
-                res["class"][0]["intent"] == "give_leave_many_no_reason" ||
-                res["class"][0]["intent"] == "give_OOD_many_no_reason"
-            ) {
-                nextIsReason = true;
-                reasonFor = res["class"][0]["intent"];
-                addbotMsg(res["results"]);
-            } else {
+            if (res["class"][0]["intent"] == "logout") {
+                logOutHandel();
+            }
+            else {
                 addbotMsg(res["results"]);
             }
         } catch (err) {
