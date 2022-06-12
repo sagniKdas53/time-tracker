@@ -1,11 +1,12 @@
-from cmath import exp
 import datetime
 import json
 import os
 import pickle
 import random
+import re
 import uuid
 
+import jwt
 import nltk
 import numpy as np
 from flask import Flask, make_response, request, send_from_directory
@@ -14,7 +15,6 @@ from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
 from werkzeug.security import check_password_hash, generate_password_hash
-import jwt
 
 # nltk.download('popular')
 lemmatizer = WordNetLemmatizer()
@@ -217,6 +217,10 @@ def get_bot_response():
     except jwt.exceptions.DecodeError as e:
         usr = 'anonymous'
         print(e)
+    if class_of_resp[0]['intent'] == "give_leave_many_reason" or class_of_resp[0]['intent'] == "give_OOD_many_reason":
+        reason_pattern = r'''['"]([0-9]*)["'] days [a-zA-Z ]* ['"]([a-zA-Z ]*)["']$'''
+        result = re.search(reason_pattern, data['body'])
+        print(result.group(1), result.group(2))
     conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=resposne,
                         user=usr, time=datetime.datetime.now(), probability=json.dumps(class_of_resp))
     db.session.add(conv)

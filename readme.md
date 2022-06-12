@@ -18,7 +18,7 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
     1. Send `time now` to see current time
     2. Send `date today` to see current date
     3. Send `time in {Hours}` to show custom time `Hours` can be negative
-    4. Send `date in {days D/weeks W/months M/}` to show needed date `{days D/weeks W/months M}` can be negative or zero but order must be maintained. The identifers `D,W,M` are necessary too.
+    4. Send `date in` to show a form accepting fields- `{days D/weeks W/months M}`, These values can be negative or zero.
 
     b. Show the day and holidays [Needs admin to fill those up] {will not be implemented now}
 
@@ -30,15 +30,19 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 
     c. Send `Give OOD today {Reason}` it will apply for OOD
 
-    d. Send `Give OOD for {Days} days because of {Reason}` it will ask for the reason in the next chat if not provided, upon getting it will apply for OOD for `{Days}`
+    d. Send `Give OOD for "Days" days because of "Reason"` the "" are necessary and without them it will fail. If reason is not provided it may ask for it but i don't plan on implementing it very soon.
+
+    e. Send `Give OOD form` it will show a form if you don't feel like formatting your messages mutiple time to do the thing that can be done by filling a form.
 
     PS: OOD - On Official Duty or Work From Home
 
 4. Apply for leave:
 
-    a. Send `Apply leave today {Reason}` it will apply for leave on the given day.
+    a. Send `Apply leave today "Reason"` it will apply for leave on the given day.
 
-    b. Send `Apply leave for {Days} days because of {Reason}` it will ask for the reason in the next chat if not provided, upon getting it will apply for leave for the next `{Days}`
+    b. Send `Apply leave for "Days" days because of "Reason"` the "" are necessary and without them it will fail. If reason is not provided it may ask for it but i don't plan on implementing it very soon.
+
+    c. Send `Give leave form` it will show a form if you don't feel like formatting your messages mutiple time to do the thing that can be done by filling a form.
 
 5. Undo:
 
@@ -65,9 +69,11 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 - [ ] Find out how to use tensor flow to call function
 - [ ] Find out how to extract the paramerts form the message and then use them to fill the data like `{Hours},{Reason},{Days}`
 - [ ] Make an error message response if the user didn't provide the correct type of data
-- [ ] Make the bot await user data like if the user sends `Give attendance` but no `{Hours}` are mentioned send a response asking to send the hours.
-- [ ] { "todo": ["Make for days too","Make the js to show the intents and classes", "Integrate the DB","Make inline message forms"] }
-  
+
+## Rejected Ideas
+
+- [X] Make the bot await user data like if the user sends `Give attendance` but no `{Hours}` are mentioned send a response asking to send the hours. (Now it fails and you have to try again)
+
 ## Caution
 
 The bot uses tensorflow and will not work on low end devices [As a host], it is accessibe by almost all modern devices.

@@ -1,6 +1,4 @@
 const url = "http://127.0.0.1:5000/";
-var nextIsReason = false;
-var reasonFor = "";
 var tokenID = ""
 function keyEvent(event) {
     event.preventDefault();
@@ -19,11 +17,14 @@ function first_visit() {
     register();
 }
 
-function register() {
+async function register() {
     // make it so that the next message can be used to register directly
     var formDiv = document.createElement("div");
-    formDiv.innerHTML =
-        "<form> <div > <label for='InputEmail' class='form-label'>Name</label> <input type='name' class='form-control' id='InputName' aria-describedby='nameHelp'> </div><div > <label for='InputEmail1' class='form-label'>Email address</label> <input type='email' class='form-control' id='InputEmail1' aria-describedby='emailHelp'></div><div > <label for='InputPassword1' class='form-label'>Password</label> <input type='password' class='form-control' id='InputPassword1'> </div><button type='submit' class='btn btn-primary' onclick='regcmp();return false'>Submit</button> </form>";
+    var myRequest = new Request(url + "rform.html");
+    fetch(myRequest).then(async function (response) {
+        const text = await response.text();
+        formDiv.innerHTML = text;
+    });
     var ul = document.getElementById("chat-list");
     var li = document.createElement("li");
     li.appendChild(formDiv);
@@ -75,11 +76,19 @@ async function regcmp() {
     }
 }
 
-function login() {
+function login(isChained = false) {
     // make it so that the next message can be used to register directly
+    //console.log(isChained);
+    if (isChained) {
+        const element = document.getElementById("rForm");
+        element.remove();
+    }
     var formDiv = document.createElement("div");
-    formDiv.innerHTML =
-        "<form> <div> <label for='InputEmail1' class='form-label'>Email address</label> <input type='email' class='form-control' id='InputEmail1' aria-describedby='emailHelp'> <div id='emailHelp' class='form-text'>We'll never share your email with anyone else.</div></div><div> <label for='InputPassword1' class='form-label'>Password</label> <input type='password' class='form-control' id='InputPassword1'> </div><button type='submit' class='btn btn-primary' onclick='loginHandel();return false'>Submit</button> </form>";
+    var myRequest = new Request(url + "lform.html");
+    fetch(myRequest).then(async function (response) {
+        const text = await response.text();
+        formDiv.innerHTML = text;
+    });
     var ul = document.getElementById("chat-list");
     var li = document.createElement("li");
     li.appendChild(formDiv);
