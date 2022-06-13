@@ -13,6 +13,14 @@
         crossorigin='anonymous'></script>
     <link rel='stylesheet' href='style.css' />
     <script type='text/javascript' src='https://livejs.com/live.js'></script>
+    <script type='text/javascript'
+        src="https://cdn.jsdelivr.net/npm/@easepick/datetime@1.2.0/dist/index.umd.min.js"></script>
+    <script type='text/javascript'
+        src="https://cdn.jsdelivr.net/npm/@easepick/core@1.2.0/dist/index.umd.min.js"></script>
+    <script type='text/javascript'
+        src="https://cdn.jsdelivr.net/npm/@easepick/base-plugin@1.2.0/dist/index.umd.min.js"></script>
+    <script type='text/javascript'
+        src="https://cdn.jsdelivr.net/npm/@easepick/range-plugin@1.2.0/dist/index.umd.min.js"></script>
 </head>
 
 <body>
@@ -82,7 +90,7 @@
                     </div>-->
                     <div class='mb-3'>
                         <label for='InputDays' class='form-label'>Dates</label>
-                        <input type="text" class="form-control" id='InputDays' name="datefilter" value="" />
+                        <input class="form-control" id='datepicker' name="datefilter" value="" />
                     </div>
                     <button type='submit' class='btn btn-primary'
                         onclick='leaveOODFormSub();return false'>Submit</button>
@@ -91,32 +99,23 @@
                     <!--
                         Get rid o JQuery and try to integarte monentjs also make a final webpack if possible
                     -->
-                    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-                    <script type="text/javascript"
-                        src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-                    <script type="text/javascript"
-                        src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-                    <link rel="stylesheet" type="text/css"
-                        href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
                     <script type='text/javascript'>
-                        $(function () {
-
-                            $('input[name="datefilter"]').daterangepicker({
-                                autoUpdateInput: false,
-                                locale: {
-                                    cancelLabel: 'Clear'
-                                }
-                            });
-
-                            $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-                                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                            });
-
-                            $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-                                $(this).val('');
-                            });
-
+                        const picker = new easepick.create({
+                            element: document.getElementById('datepicker'),
+                            css: [
+                                'https://cdn.jsdelivr.net/npm/@easepick/core@1.2.0/dist/index.css',
+                                'https://cdn.jsdelivr.net/npm/@easepick/range-plugin@1.2.0/dist/index.css',
+                            ],
+                            plugins: ['RangePlugin'],
+                            RangePlugin: {
+                                tooltip: true,
+                            },
                         });
+                        function leaveOODFormSub() {
+                            console.log(picker.getStartDate());
+                            console.log(picker.getEndDate());
+
+                        }
                     </script>
                 </form>
             </div>
