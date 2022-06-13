@@ -228,6 +228,7 @@ def get_bot_response():
     called_on = datetime.datetime.now()
     data = request.get_json()
     resposne, class_of_resp = chatbot_response(data['body'])
+    sanitized = data['body'].replace('"', "'").strip()
     try:
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         usr = token['id']
@@ -244,15 +245,30 @@ def get_bot_response():
             stat = "leave"
         if class_of_resp[0]['intent'] == "give_OOD_many_reason":
             stat = "OOD"
-        reason_pattern = r'''[ "']([0-9]*)['" ][a-zA-Z ]*[ '"]([a-zA-Z ]*)['".]$'''
-        result = re.search(reason_pattern, data['body'])
-        days, reason = int(result.group(1)), result.group(2)
-        print(days, reason)
-        for i in range(days):
-            cmd = attendance_sheet(id=str(uuid.uuid4()), date=(called_on+datetime.timedelta(days=i)),
-                                   status=stat, hours=24, reason=reason, user=usr)
+        try:
+            reason_pattern = r'''[ ']([0-9]*)['" ][a-zA-Z ]*[ ']([a-zA-Z ]*)['.]$'''
+            result = re.search(reason_pattern, sanitized)
+            days, reason = int(result.group(1)), result.group(2)
+            print(days, reason)
+            for i in range(days):
+                cmd = attendance_sheet(id=str(uuid.uuid4()), date=(called_on+datetime.timedelta(days=i)),
+                                       status=stat, hours=24, reason=reason, user=usr)
+                print(cmd)
+                db.session.add(cmd)
+        except AttributeError as e:
+            resposne = "Input improperly formatted or incomplete. The '' are necessary."
+    if class_of_resp[0]['intent'] == "give_attendance_today":
+        try:
+            reason_pattern = r"'([0-9.]*)'"
+            result = re.search(reason_pattern, sanitized)
+            hours = float(result.group(1))
+            print(hours)
+            cmd = attendance_sheet(id=str(uuid.uuid4()), date=called_on,
+                                   status='attendance', hours=hours, reason='no reason', user=usr)
             print(cmd)
             db.session.add(cmd)
+        except AttributeError as e:
+            resposne = "Input improperly formatted or incomplete. The '' are necessary."
     conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=resposne,
                         user=usr, time=called_on, probability=json.dumps(class_of_resp))
     db.session.add(conv)
