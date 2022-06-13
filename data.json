@@ -99,25 +99,26 @@
     {
       "tag": "give_attendance_today",
       "patterns": [
-        "Submit todays attendance",
-        "Give todays attendance",
-        "Attended today",
-        "attendance today",
-        "Did a good day of work"
+        "Submit todays attendance hours",
+        "Give todays attendance hours",
+        "Attended today hours",
+        "attendance today hours",
+        "attendance for todays work hours"
       ],
       "responses": [
         "Trying to submit todays attendance",
         "Giving todays attendance please wait"
       ],
       "context_set": ["attendance_submit"],
-      "context_filter": ["attendance_tracker", "unspecified"]
+      "context_filter": ["attendance_tracker", "unspecified"],
+      "notes": "today, hours are the keywords"
     },
     {
       "tag": "give_leave_today",
       "patterns": [
         "Submit todays leave",
         "Give todays leave",
-        "Apply_leave today"
+        "Apply for leave today"
       ],
       "responses": [
         "Trying to submit todays leave",
@@ -129,17 +130,18 @@
     {
       "tag": "give_OOD_today",
       "patterns": [
-        "Submit todays OOD",
-        "Give todays OOD",
-        "OOD submit today",
-        "Did a OOD today"
+        "Submit todays OOD for",
+        "Give todays OOD for",
+        "OOD submit today for",
+        "Did a OOD today for"
       ],
       "responses": [
         "Trying to submit todays OOD",
         "Giving todays OOD please wait"
       ],
       "context_set": ["OOD_submit"],
-      "context_filter": ["attendance_tracker", "unspecified"]
+      "context_filter": ["attendance_tracker", "unspecified"],
+      "notes": "OOD, for are the keywords"
     },
     {
       "tag": "display_user_info",
@@ -150,7 +152,7 @@
         "Who is logged in"
       ],
       "responses": ["Showing user info", "Retriving user info"],
-      "context_set": ["OOD_submit"],
+      "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
     {
@@ -175,39 +177,24 @@
       "context_filter": ["unspecified"]
     },
     {
-      "tag": "give_OOD_many_no_reason",
-      "patterns": ["OOD for", "Give OOD for"],
-      "responses": ["Please give a reason"],
-      "context_set": ["OOD_many_no_reason"],
+      "tag": "OOD_form",
+      "patterns": ["show OOD form", "OOD", "form OOD"],
+      "responses": ["Showing Form"],
+      "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
     {
       "tag": "give_OOD_many_reason",
       "patterns": ["OOD for because of", "Give OOD for because of"],
       "responses": ["Processing OOD"],
-      "context_set": ["OOD_many_reason"],
+      "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
     {
-      "tag": "give_reason",
-      "patterns": [
-        "I have to",
-        "I need to",
-        "because of",
-        "due to",
-        "need",
-        "want",
-        "necessary"
-      ],
-      "responses": ["Processing responses"],
-      "context_set": ["reasoner"],
-      "context_filter": ["OOD_many_no_reason", "leave_many_no_reason"]
-    },
-    {
-      "tag": "give_leave_many_no_reason",
-      "patterns": ["leave for", "Give leave for"],
-      "responses": ["Please give a reason"],
-      "context_set": ["leave_many_no_reason"],
+      "tag": "leave_form",
+      "patterns": ["leave form", "leave", "Give leave form"],
+      "responses": ["Showing Form"],
+      "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
     {

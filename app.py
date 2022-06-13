@@ -124,7 +124,7 @@ class user_db(db.Model):
 
     def __repr__(self):
         return f'User Name: {self.username}\nEmail: {self.email}\
-            \nAdmin: {bool(self.admin)}'
+            \nID: {self.id}'
 
     def __init__(self, id, name, email, username, password, admin=False):
         self.username = username
@@ -133,6 +133,27 @@ class user_db(db.Model):
         self.password = password
         self.id = id
         self.admin = admin
+
+
+class attendance_sheet(db.Model):
+    id = db.Column(db.String(200), primary_key=True)
+    date = db.Column(db.DateTime)
+    status = db.Column(db.String(20))
+    hours = db.Column(db.Float)
+    reason = db.Column(db.Text)
+    user = db.Column(db.String(200))
+
+    def __repr__(self):
+        return f'User Name: {self.user}\nStatus: {self.status}\
+            \nDate: {self.date}'
+
+    def __init__(self, id, date, status, hours, reason, user):
+        self.id = id
+        self.date = date
+        self.status = status
+        self.hours = hours
+        self.reason = reason
+        self.user = user
 
 
 db.create_all()
@@ -204,10 +225,9 @@ def bot_login():
 
 @app.route("/api/chat", methods=['POST'])
 def get_bot_response():
+    called_on = datetime.datetime.now()
     data = request.get_json()
     resposne, class_of_resp = chatbot_response(data['body'])
-    print(f"\nUser: {data['body']}")
-    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
     try:
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         usr = token['id']
@@ -217,12 +237,24 @@ def get_bot_response():
     except jwt.exceptions.DecodeError as e:
         usr = 'anonymous'
         print(e)
+    print(f"\nUser ID: {usr}\nMessage: {data['body']}")
+    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
     if class_of_resp[0]['intent'] == "give_leave_many_reason" or class_of_resp[0]['intent'] == "give_OOD_many_reason":
-        reason_pattern = r'''['"]([0-9]*)["'] days [a-zA-Z ]* ['"]([a-zA-Z ]*)["']$'''
+        if class_of_resp[0]['intent'] == "give_leave_many_reason":
+            stat = "leave"
+        if class_of_resp[0]['intent'] == "give_OOD_many_reason":
+            stat = "OOD"
+        reason_pattern = r'''[ "']([0-9]*)['" ][a-zA-Z ]*[ '"]([a-zA-Z ]*)['".]$'''
         result = re.search(reason_pattern, data['body'])
-        print(result.group(1), result.group(2))
+        days, reason = int(result.group(1)), result.group(2)
+        print(days, reason)
+        for i in range(days):
+            cmd = attendance_sheet(id=str(uuid.uuid4()), date=(called_on+datetime.timedelta(days=i)),
+                                   status=stat, hours=24, reason=reason, user=usr)
+            print(cmd)
+            db.session.add(cmd)
     conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=resposne,
-                        user=usr, time=datetime.datetime.now(), probability=json.dumps(class_of_resp))
+                        user=usr, time=called_on, probability=json.dumps(class_of_resp))
     db.session.add(conv)
     db.session.commit()
     return make_response({

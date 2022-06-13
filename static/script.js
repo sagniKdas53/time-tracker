@@ -131,6 +131,7 @@ async function loginHandel() {
             element.remove();
             // cookies set
             Cookies.set("token", res['token'], { expires: 7 });
+            tokenID = Cookies.get('token');
         } else {
             addbotMsgRTL(res["status"]);
         }
