@@ -1,0 +1,20 @@
+<form>
+    <div class='mb-3'>
+        <label for='InputWhat' class='form-label'>What do you need?</label>
+        <select class="form-select" aria-label="Default select example">
+            <option selected>Click here</option>
+            <option value="leave">Leave</option>
+            <option value="OOD">OOD</option>
+        </select>
+    </div>
+    <div class='mb-3'>
+        <label for='InputDays' class='form-label'>Start Date</label>
+        <input class="form-control" type="date" id="start">
+    </div>
+    <div class='mb-3'>
+        <label for='InputDays' class='form-label'>End Date</label>
+        <input class="form-control" type="date" id="end">
+    </div>
+    <button type='submit' class='btn btn-primary' onclick='OOD_form_handel();return false'>Submit</button>
+    <button type='submit' class='btn btn-primary' onclick='OOD_form_Cancel();return false'>Cancel</button>
+</form>
