@@ -246,6 +246,55 @@ def OODForm_processor():
         })
 
 
+@app.route("/api/timedelta", methods=['POST'])
+def timedelta():
+    data = request.get_json()
+    print(data)
+    if not data or not data['delta']:
+        return make_response('could not processe request', 401, {'status': 'more info required'})
+    else:
+        called_on = datetime.datetime.now()
+        if data['delta'] == '0':
+            delta = datetime.timedelta(hours=0)
+        else:
+            try:
+                pattern = "'([0-9.-]*)'"
+                result = re.search(
+                    pattern, data['delta'].replace('"', "'").strip())
+                delta = datetime.timedelta(hours=float(result.group(1)))
+            except AttributeError:
+                return make_response('could not processe request', 401, {'status': 'could not parse input'})
+        return make_response({
+            'status': 'success',
+            'results': str((called_on+delta).strftime("%H:%M:%S"))
+        })
+
+
+@app.route("/api/graph", methods=['POST'])
+def attendance_graph():
+    data = request.get_json()
+    print(data)
+    if not data or not data['token']:
+        return make_response('could not processe request', 401, {'status': 'more info required'})
+    else:
+        token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
+        user = token['id']
+        now = datetime.datetime.now()
+        monday = now - datetime.timedelta(days=now.weekday())
+        attendance = attendance_sheet.query.filter(attendance_sheet.user == user).filter(attendance_sheet.date >= monday).order_by(
+            attendance_sheet.date)
+        output = []
+        for day in attendance:
+            output.append((day.date, day.status, day.hours))
+        graph = output
+        print(graph)
+        # make the graph here and send it as a response, idk how tho
+        return make_response({
+            'status': 'success',
+            'attendance': graph
+        })
+
+
 @app.route("/api/chat", methods=['POST'])
 def get_bot_response():
     called_on = datetime.datetime.now()

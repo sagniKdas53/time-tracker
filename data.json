@@ -205,7 +205,7 @@
       "context_filter": ["unspecified"]
     },
     {
-      "tag": "time_intents",
+      "tag": "time_now",
       "patterns": [
         "time now",
         "what is the time now",
@@ -225,7 +225,7 @@
       "tag": "time_deltas",
       "patterns": [
         "time in hours",
-        "what will be the time in hours",
+        "what will the time be in hours",
         "time after hours"
       ],
       "responses": [

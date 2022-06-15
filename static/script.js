@@ -1,6 +1,5 @@
 const url = "http://127.0.0.1:5000/";
 var tokenID = ""
-var picker = ''
 
 function keyEvent(event) {
     event.preventDefault();
@@ -104,9 +103,7 @@ function login(isChained = false) {
 async function loginHandel() {
     var email = document.getElementById("InputEmail2").value;
     var pword = document.getElementById("InputPassword2").value;
-    //console.log(email, pword);
 
-    //addbotMsgRTL("Logging you in");
     try {
         // Create request to api service
         const req = await fetch(url + "api/login", {
@@ -273,6 +270,56 @@ async function adduserMsg() {
             }
             if (res["class"][0]["intent"] == "OOD_form" || res["class"][0]["intent"] == "leave_form") {
                 OOD_form();
+            }
+            if (res["class"][0]["intent"] == "time_now") {
+                const reqw = await fetch(url + "api/timedelta", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                    },
+
+                    // format the data
+                    body: JSON.stringify({
+                        delta: '0'
+                    }),
+                });
+                const ress = await reqw.json();
+                addbotMsg(ress["results"]);
+            }
+            if (res["class"][0]["intent"] == "time_deltas") {
+                const reqw = await fetch(url + "api/timedelta", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                    },
+
+                    // format the data
+                    body: JSON.stringify({
+                        delta: text
+                    }),
+                });
+                const ress = await reqw.json();
+                addbotMsg(ress["results"]);
+            }
+            if (res["class"][0]["intent"] == "show_attendance") {
+                addbotMsg(res["results"]);
+                const reqw = await fetch(url + "api/graph", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                    },
+
+                    // format the data
+                    body: JSON.stringify({
+                        token: tokenID
+                    }),
+                });
+                const ress = await reqw.json();
+                console.log(ress);
+                addbotMsg(ress["attendance"]);
             }
             else {
                 addbotMsg(res["results"]);
