@@ -223,6 +223,29 @@ def bot_login():
             return make_response({'email': str(user_ent.email), 'status': "Incorrect password"})
 
 
+@app.route("/api/OODL", methods=['POST'])
+def OODForm_processor():
+    data = request.get_json()
+    print(data)
+    if not data or not data['reason'] or not data['start'] or\
+            not data['end'] or not data['token'] or not data['cause']:
+        return make_response('could not processe request', 401, {'status': 'more info required"'})
+    else:
+        token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
+        start_time_obj = datetime.datetime.strptime(data['start'], '%Y-%m-%d')
+        end_time_obj = datetime.datetime.strptime(data['end'], '%Y-%m-%d')
+        while start_time_obj <= end_time_obj:
+            print(start_time_obj)
+            cmd = attendance_sheet(id=str(uuid.uuid4()), date=start_time_obj,
+                                   status=data['reason'], hours=24, reason=data['cause'], user=token['id'])
+            db.session.add(cmd)
+            start_time_obj += datetime.timedelta(days=1)
+        db.session.commit()
+        return make_response({
+            'status': 'Succesfully applied for '+data['reason'],
+        })
+
+
 @app.route("/api/chat", methods=['POST'])
 def get_bot_response():
     called_on = datetime.datetime.now()

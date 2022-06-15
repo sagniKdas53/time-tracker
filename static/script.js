@@ -151,7 +151,7 @@ async function loginCancel() {
 
 function OOD_form() {
     var formDiv = document.createElement("div");
-    var myRequest = new Request(url + "ODDL.html");
+    var myRequest = new Request(url + "OODL.html");
     fetch(myRequest).then(async function (response) {
         const text = await response.text();
         formDiv.innerHTML = text;
@@ -167,12 +167,13 @@ function OOD_form() {
 
 // make this one work
 async function OOD_form_handel() {
-    var email = document.getElementById("InputEmail2").value;
-    var pword = document.getElementById("InputPassword2").value;
-
+    var reason = document.getElementById("reason").value;
+    var start = document.getElementById("start").value;
+    var end = document.getElementById("end").value;
+    var cause = document.getElementById("cause").value;
     try {
         // Create request to api service
-        const req = await fetch(url + "api/login", {
+        const req = await fetch(url + "api/OODL", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -181,9 +182,11 @@ async function OOD_form_handel() {
 
             // format the data
             body: JSON.stringify({
-                email: email,
-                password: pword,
-                action: "login",
+                reason: reason,
+                start: start,
+                end: end,
+                token: tokenID,
+                cause: cause
             }),
         });
 
@@ -191,16 +194,9 @@ async function OOD_form_handel() {
 
         // Log success message
         console.log(res);
-        if (res["status"] == "done" && res['token'] != null) {
-            addbotMsgRTL("Done");
-            const element = document.getElementById("lForm");
-            element.remove();
-            // cookies set
-            Cookies.set("token", res['token'], { expires: 7 });
-            tokenID = Cookies.get('token');
-        } else {
-            addbotMsgRTL(res["status"]);
-        }
+        addbotMsgRTL(res["status"]);
+        const element = document.getElementById("OODLForm");
+        element.remove();
     } catch (err) {
         console.error(`ERROR: ${err}`);
     }
@@ -275,7 +271,7 @@ async function adduserMsg() {
             if (res["class"][0]["intent"] == "logout") {
                 logOutHandel();
             }
-            if (res["class"][0]["intent"] == "OOD_form") {
+            if (res["class"][0]["intent"] == "OOD_form" || res["class"][0]["intent"] == "leave_form") {
                 OOD_form();
             }
             else {
