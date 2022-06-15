@@ -172,14 +172,14 @@ def serve(path):
 def bot_register():
     data = request.get_json()
     print(data)
-    # resposne, class_of_resp = chatbot_response(data['body'])
+    # response, class_of_resp = chatbot_response(data['body'])
     if data['action'] == 'register' and data['password'] and data['email'] and data['name']:
         hashed_password = generate_password_hash(
             data['password'], method='sha256')
         email = user_db.query.filter_by(email=data['email']).first()
         if email:
             return make_response({
-                'name': data['name'],
+
                 'email': data['email'],
                 'status': "the email has been already registered"
             })
@@ -190,13 +190,13 @@ def bot_register():
                 db.session.add(new_user)
                 db.session.commit()
                 return make_response({
-                    'name': data['name'],
+
                     'email': data['email'],
-                    'status': 'done'
+                    'status': 'successfully registered'
                 })
             except Exception as e:
                 return make_response({
-                    'name': data['name'],
+
                     'email': data['email'],
                     'status': e
                 })
@@ -209,7 +209,7 @@ def bot_register():
 @app.route("/api/login", methods=['POST'])
 def bot_login():
     data = request.get_json()
-    if not data or not data['email'] or not data['password'] or data['action'] != 'login':
+    if not data or not data['email'] or not data['password']:
         return make_response('could not verify', 401, {'status': 'login info required"'})
     else:
         user_ent = user_db.query.filter_by(email=data['email']).first()
@@ -228,8 +228,8 @@ def OODForm_processor():
     data = request.get_json()
     print(data)
     if not data or not data['reason'] or not data['start'] or\
-            not data['end'] or not data['token'] or not data['cause']:
-        return make_response('could not processe request', 401, {'status': 'more info required"'})
+            not data['end'] or not data['token'] or not data['cause'] or not data['hours']:
+        return make_response('could not process request', 401, {'status': 'more info required"'})
     else:
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         start_time_obj = datetime.datetime.strptime(data['start'], '%Y-%m-%d')
@@ -237,12 +237,12 @@ def OODForm_processor():
         while start_time_obj <= end_time_obj:
             print(start_time_obj)
             cmd = attendance_sheet(id=str(uuid.uuid4()), date=start_time_obj,
-                                   status=data['reason'], hours=24, reason=data['cause'], user=token['id'])
+                                   status=data['reason'], hours=data['hours'], reason=data['cause'], user=token['id'])
             db.session.add(cmd)
             start_time_obj += datetime.timedelta(days=1)
         db.session.commit()
         return make_response({
-            'status': 'Succesfully applied for '+data['reason'],
+            'status': 'Successfully applied for '+data['reason'],
         })
 
 
@@ -251,7 +251,7 @@ def timedelta():
     data = request.get_json()
     print(data)
     if not data or not data['delta']:
-        return make_response('could not processe request', 401, {'status': 'more info required'})
+        return make_response('could not process request', 401, {'status': 'more info required'})
     else:
         called_on = datetime.datetime.now()
         if data['delta'] == '0':
@@ -263,10 +263,10 @@ def timedelta():
                     pattern, data['delta'].replace('"', "'").strip())
                 delta = datetime.timedelta(hours=float(result.group(1)))
             except AttributeError:
-                return make_response('could not processe request', 401, {'status': 'could not parse input'})
+                return make_response('could not process request', 401, {'status': 'could not parse input'})
         return make_response({
             'status': 'success',
-            'results': str((called_on+delta).strftime("%H:%M:%S"))
+            'results': str((called_on+delta).strftime("%m/%d/%Y, %H:%M:%S"))
         })
 
 
@@ -275,7 +275,7 @@ def attendance_graph():
     data = request.get_json()
     print(data)
     if not data or not data['token']:
-        return make_response('could not processe request', 401, {'status': 'more info required'})
+        return make_response('could not process request', 401, {'status': 'more info required'})
     else:
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         user = token['id']
@@ -299,19 +299,19 @@ def attendance_graph():
 def get_bot_response():
     called_on = datetime.datetime.now()
     data = request.get_json()
-    resposne, class_of_resp = chatbot_response(data['body'])
+    response, class_of_resp = chatbot_response(data['body'])
     sanitized = data['body'].replace('"', "'").strip()
     try:
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         usr = token['id']
         expiry = token['exp']
         if round(datetime.datetime.now().timestamp()) > expiry:
-            resposne = 'please re login'
+            response = 'please re login'
     except jwt.exceptions.DecodeError as e:
         usr = 'anonymous'
         print(e)
     print(f"\nUser ID: {usr}\nMessage: {data['body']}")
-    print(f"Bot:{resposne}\nClass: {class_of_resp}\n")
+    print(f"Bot:{response}\nClass: {class_of_resp}\n")
     if class_of_resp[0]['intent'] == "give_leave_many_reason" or class_of_resp[0]['intent'] == "give_OOD_many_reason":
         if class_of_resp[0]['intent'] == "give_leave_many_reason":
             stat = "leave"
@@ -328,7 +328,7 @@ def get_bot_response():
                 print(cmd)
                 db.session.add(cmd)
         except AttributeError as e:
-            resposne = "Input improperly formatted or incomplete. The '' are necessary."
+            response = "Input improperly formatted or incomplete. The '' are necessary."
     if class_of_resp[0]['intent'] == "give_attendance_today":
         try:
             reason_pattern = r"'([0-9.]*)'"
@@ -340,13 +340,13 @@ def get_bot_response():
             print(cmd)
             db.session.add(cmd)
         except AttributeError as e:
-            resposne = "Input improperly formatted or incomplete. The '' are necessary."
-    conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=resposne,
+            response = "Input improperly formatted or incomplete. The '' are necessary."
+    conv = conversation(id=str(uuid.uuid4()), message=data['body'], response=response,
                         user=usr, time=called_on, probability=json.dumps(class_of_resp))
     db.session.add(conv)
     db.session.commit()
     return make_response({
-        'results': resposne,
+        'results': response,
         'class': class_of_resp,
     })
 

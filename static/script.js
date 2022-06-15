@@ -42,7 +42,7 @@ async function regcmp() {
     var pword = document.getElementById("InputPassword1").value;
     console.log(name, email, pword);
 
-    addbotMsgRTL("Resgistering");
+    addbotMsgRTL("Starting Registration");
     try {
         // Create request to api service
         const req = await fetch(url + "api/register", {
@@ -65,8 +65,8 @@ async function regcmp() {
 
         // Log success message
         //console.log(res);
-        if (res["status"] == "done") {
-            addbotMsgRTL("Done");
+        if (res["status"] == "successfully registered") {
+            addbotMsgRTL("Successfully registered");
             const element = document.getElementById("rForm");
             element.remove();
         } else {
@@ -105,7 +105,6 @@ async function loginHandel() {
     var pword = document.getElementById("InputPassword2").value;
 
     try {
-        // Create request to api service
         const req = await fetch(url + "api/login", {
             method: "POST",
             headers: {
@@ -116,8 +115,7 @@ async function loginHandel() {
             // format the data
             body: JSON.stringify({
                 email: email,
-                password: pword,
-                action: "login",
+                password: pword
             }),
         });
 
@@ -129,7 +127,7 @@ async function loginHandel() {
             addbotMsgRTL("Done");
             const element = document.getElementById("lForm");
             element.remove();
-            // cookies set
+            // cookies setup
             Cookies.set("token", res['token'], { expires: 7 });
             tokenID = Cookies.get('token');
         } else {
@@ -168,6 +166,7 @@ async function OOD_form_handel() {
     var start = document.getElementById("start").value;
     var end = document.getElementById("end").value;
     var cause = document.getElementById("cause").value;
+    var hours = document.getElementById("Hours").value;
     try {
         // Create request to api service
         const req = await fetch(url + "api/OODL", {
@@ -183,7 +182,8 @@ async function OOD_form_handel() {
                 start: start,
                 end: end,
                 token: tokenID,
-                cause: cause
+                cause: cause,
+                hours: hours
             }),
         });
 
@@ -285,7 +285,8 @@ async function adduserMsg() {
                     }),
                 });
                 const ress = await reqw.json();
-                addbotMsg(ress["results"]);
+                console.log(res, ress);
+                addbotMsgRTL(ress["results"]);
             }
             if (res["class"][0]["intent"] == "time_deltas") {
                 const reqw = await fetch(url + "api/timedelta", {
@@ -301,10 +302,11 @@ async function adduserMsg() {
                     }),
                 });
                 const ress = await reqw.json();
-                addbotMsg(ress["results"]);
+                console.log(res, ress);
+                addbotMsgRTL(ress["results"]);
             }
             if (res["class"][0]["intent"] == "show_attendance") {
-                addbotMsg(res["results"]);
+                addbotMsgRTL(res["results"]);
                 const reqw = await fetch(url + "api/graph", {
                     method: "POST",
                     headers: {
@@ -319,10 +321,12 @@ async function adduserMsg() {
                 });
                 const ress = await reqw.json();
                 console.log(ress);
-                addbotMsg(ress["attendance"]);
+                addbotMsgRTL(ress["attendance"]);
             }
             else {
-                addbotMsg(res["results"]);
+                console.log('here')
+                if (res["results"] != "DNP")
+                    addbotMsgRTL(res["results"]);
             }
         } catch (err) {
             console.error(`ERROR: ${err}`);
@@ -345,6 +349,7 @@ async function addbotMsg(msg) {
     }
 }
 
+// RTL for RealTimeL???
 function addbotMsgRTL(msg) {
     var msgSpan = document.createElement("div");
     msgSpan.innerHTML = msg;

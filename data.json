@@ -151,21 +151,21 @@
         "Show my info",
         "Who is logged in"
       ],
-      "responses": ["Showing user info", "Retriving user info"],
+      "responses": ["Showing user info", "Retrieving user info"],
       "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
     {
       "tag": "register",
       "patterns": ["register me", "register", "add me", "add user"],
-      "responses": ["Starting Registartion", "Registeration Started"],
+      "responses": ["Starting Registration", "Registration Started"],
       "context_set": ["user_register"],
       "context_filter": ["unspecified"]
     },
     {
       "tag": "login",
       "patterns": ["login", "want to login", "let me in", "sign in"],
-      "responses": ["Logging you in", "Loggin in"],
+      "responses": ["Logging you in", "Logging in"],
       "context_set": ["user_login"],
       "context_filter": ["unspecified"]
     },
@@ -213,11 +213,7 @@
         "show time",
         "what time is it?"
       ],
-      "responses": [
-        "Let the javascript handel it [Will add later]",
-        "Look it up yourself",
-        "Checking it won't make it happen faster"
-      ],
+      "responses": ["DNP"],
       "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
@@ -228,11 +224,7 @@
         "what will the time be in hours",
         "time after hours"
       ],
-      "responses": [
-        "Let the javascript handel it [Will add later]",
-        "Look it up yourself",
-        "Time deltas are amazing"
-      ],
+      "responses": ["DNP"],
       "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     }

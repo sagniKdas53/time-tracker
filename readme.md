@@ -65,14 +65,17 @@ This bot is supposed to be bot that helps you to fill and manage your time sheet
 - [X] Make the webpage
 - [X] Start the bot
 - [ ] Find all the user inputs and the responses that I will need to feed into the training
-- [ ] Training and test the model
-- [ ] Find out how to use tensor flow to call function
-- [ ] Find out how to extract the paramerts form the message and then use them to fill the data like `{Hours},{Reason},{Days}`
-- [ ] Make an error message response if the user didn't provide the correct type of data
+- [X] Training and test the model
+- [X] Find out how to use tensor flow to call function
+- [X] Find out how to extract the paramerts form the message and then use them to fill the data like `{Hours},{Reason},{Days}`
+- [X] Make an error message response if the user didn't provide the correct type of data
+- [ ] Add a graphing library to show the attendance
+- [ ] Make an attendace form
 
 ## Rejected Ideas
 
-- [X] Make the bot await user data like if the user sends `Give attendance` but no `{Hours}` are mentioned send a response asking to send the hours. (Now it fails and you have to try again)
+- [ ] Make the bot await user data like if the user sends `Give attendance` but no `{Hours}` are mentioned send a response asking to send the hours. (Now it fails and you have to try again)
+- [ ] Make an undo command (too hard to make)
 
 ## Caution
 
