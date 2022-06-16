@@ -320,7 +320,7 @@ async function adduserMsg() {
                     }),
                 });
                 const ress = await reqw.json();
-                console.log(ress);
+                console.log(ress['attendance']);
                 addbotMsgRTL(ress["attendance"]);
             }
             else {

@@ -280,18 +280,33 @@ def attendance_graph():
         token = jwt.decode(data['token'], app.config['SECRET_KEY'], "HS256")
         user = token['id']
         now = datetime.datetime.now()
-        monday = now - datetime.timedelta(days=now.weekday())
-        attendance = attendance_sheet.query.filter(attendance_sheet.user == user).filter(attendance_sheet.date >= monday).order_by(
-            attendance_sheet.date)
+        monday = now - datetime.timedelta(days=(now.weekday()+1))
+        friday = monday + datetime.timedelta(days=5)
+        attendance = attendance_sheet.query.filter(attendance_sheet.user == user).filter(attendance_sheet.date >= monday)\
+            .filter(attendance_sheet.date <= friday).order_by(attendance_sheet.date).all()
         output = []
+        attendance_data = {
+            'work': 0, 'leave': 0, 'overtime': 0, 'ood': 0
+        }
+        effort_data = {
+            'effort': 0, 'extra_effort': 0
+        }
         for day in attendance:
-            output.append((day.date, day.status, day.hours))
-        graph = output
-        print(graph)
+            output.append((day.date, day.status, day.hours, '<br>'))
+            if day.status == 'attendance' or day.status == 'OOD':
+                effort_data['effort'] += day.hours
+                attendance_data['work'] += 1
+            elif day.status == 'leave':
+                attendance_data['leave'] += 1
+            elif day.status == 'overtime':
+                effort_data['extra_effort'] += day.hours
+                attendance_data['overtime'] += 1
+        graph = (effort_data['effort']/(8.5*(now.weekday()+1)))*100
+        print(graph, output, attendance_data, effort_data, sep='\n')
         # make the graph here and send it as a response, idk how tho
         return make_response({
             'status': 'success',
-            'attendance': graph
+            'attendance': str(graph)+'%'
         })
 
 
