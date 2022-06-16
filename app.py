@@ -7,6 +7,9 @@ import re
 import uuid
 
 import jwt
+import matplotlib.pyplot as plt
+import minify_html
+import mpld3
 import nltk
 import numpy as np
 from flask import Flask, make_response, request, send_from_directory
@@ -301,12 +304,45 @@ def attendance_graph():
             elif day.status == 'overtime':
                 effort_data['extra_effort'] += day.hours
                 attendance_data['overtime'] += 1
-        graph = (effort_data['effort']/(8.5*(now.weekday()+1)))*100
-        print(graph, output, attendance_data, effort_data, sep='\n')
-        # make the graph here and send it as a response, idk how tho
+        fig = plt.figure(figsize=(5, 5), facecolor='white')
+        plt.subplots_adjust(left=0.05, right=0.95)
+        # pie chart
+        plt.subplot(211)
+        total = 42.5
+        values = []
+        for val in effort_data.values():
+            values.append(val)
+            total -= val
+        if total < 0:
+            values.append(0)
+        else:
+            values.append(total)
+        print(values)
+        labels = list(effort_data.keys())
+        labels.append('unutilized time')
+        print(labels)
+        pie = plt.pie(values, labels=labels)
+        # bar graph
+        plt.subplot(212)
+        values = np.array(list(attendance_data.values()))
+        mylabels = list(attendance_data.keys())
+        bar = plt.bar(mylabels, values)
+        plt.title("Pie and Bar")
+        plt.ylabel("Days")
+        plt.xlabel("Work Type")
+        graph = mpld3.fig_to_html(
+            fig, template_type="simple", include_libraries=True)
+        f = open("misc/graph.html", "w")
+        f.write(graph)
+        f.close()
+        minified = minify_html.minify(
+            graph, minify_js=True, remove_processing_instructions=True)
+        f = open("misc/graph_minified.html", "w")
+        f.write(minified)
+        f.close()
         return make_response({
             'status': 'success',
-            'attendance': str(graph)+'%'
+            'payload': minified
         })
 
 
