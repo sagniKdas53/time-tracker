@@ -19,10 +19,11 @@ from plotly.subplots import make_subplots
 from werkzeug.security import check_password_hash, generate_password_hash
 
 try:
-    if nltk.data.find('corpora/omw-1.4'):
-        print('Data is moslty downloaded')
-    elif os.environ['deployment']:
-        nltk.download('popular')
+    if os.environ['deployment']:
+        '''corpora = file1 = open('nltk.txt', 'r')
+        for line in corpora:'''
+        if nltk.data.find('corpora/omw-1.4'):
+            print('Data is moslty downloaded')
 except (KeyError, LookupError):
     print('NLTK data corpus has problems in initilizing')
 
@@ -100,7 +101,7 @@ try:
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['URI']
         app.config['SECRET_KEY'] = os.environ['SECRET']
 except KeyError:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://hyoryknfluddky:722bb2161259ab8ac73dada6e70875f8258909296dd481e62d2655ffa5326a81@ec2-52-44-13-158.compute-1.amazonaws.com:5432/d10rp0bt5d4qbc'
     app.config['SECRET_KEY'] = "1b308e20a6f3193e43c021bb1412808f"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
@@ -169,6 +170,18 @@ class attendance_sheet(db.Model):
 
 
 db.create_all()
+
+# making the default anon user
+try:
+    anon = user_db.query.filter(user_db.name == 'anonymous').first().id
+    print(f'Anon id is: {anon}')
+except AttributeError:
+    anon = str(uuid.uuid4())
+    print(f'Anon id is: {anon}')
+    anon_usr = user_db(id=anon, name='anonymous', username='anonymous', password=anon,
+                       email='anonymous@anonymous.anon', admin=False)
+    db.session.add(anon_usr)
+    db.session.commit()
 
 
 @app.route('/', defaults={'path': ''})
@@ -358,7 +371,7 @@ def get_bot_response():
         if round(datetime.datetime.now().timestamp()) > expiry:
             response = 'please re login'
     except jwt.exceptions.DecodeError as e:
-        usr = 'anonymous'
+        usr = anon
         print(e)
     print(f"\nUser ID: {usr}\nMessage: {data['body']}")
     print(f"Bot:{response}\nClass: {class_of_resp}\n")
