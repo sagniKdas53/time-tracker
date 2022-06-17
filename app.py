@@ -22,6 +22,7 @@ try:
     if os.environ['deployment']:
         if nltk.data.find('corpora/omw-1.4'):
             print('Data is moslty downloaded')
+        nltk.download('punkt')
 except (KeyError, LookupError):
     print('NLTK data corpus has problems in initilizing')
 

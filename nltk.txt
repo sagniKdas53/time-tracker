@@ -7,3 +7,4 @@ cmudict
 twitter_samples
 words
 wordnet_ic
+punkt
