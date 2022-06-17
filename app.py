@@ -20,8 +20,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 try:
     if os.environ['deployment']:
-        '''corpora = file1 = open('nltk.txt', 'r')
-        for line in corpora:'''
         if nltk.data.find('corpora/omw-1.4'):
             print('Data is moslty downloaded')
 except (KeyError, LookupError):
