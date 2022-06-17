@@ -7,9 +7,9 @@ import re
 import uuid
 
 import jwt
-import matplotlib.pyplot as plt
 import minify_html
-import mpld3
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import nltk
 import numpy as np
 from flask import Flask, make_response, request, send_from_directory
