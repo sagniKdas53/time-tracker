@@ -18,8 +18,14 @@ from nltk.stem import WordNetLemmatizer
 from plotly.subplots import make_subplots
 from werkzeug.security import check_password_hash, generate_password_hash
 
-if os.environ['deployment']:
-    nltk.download('popular')
+try:
+    if nltk.data.find('corpora/omw-1.4'):
+        print('Data is moslty downloaded')
+    elif os.environ['deployment']:
+        nltk.download('popular')
+except (KeyError, LookupError):
+    print('NLTK data corpus has problems in initilizing')
+
 lemmatizer = WordNetLemmatizer()
 
 model = load_model('model.h5')
@@ -89,10 +95,11 @@ app.static_folder = 'static'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Database
-if os.environ['deployment']:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['URI']
-    app.config['SECRET_KEY'] = os.environ['SECRET']
-else:
+try:
+    if os.environ['deployment']:
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['URI']
+        app.config['SECRET_KEY'] = os.environ['SECRET']
+except KeyError:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
     app.config['SECRET_KEY'] = "1b308e20a6f3193e43c021bb1412808f"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True

@@ -6,3 +6,5 @@ training_data
 tflearn_logs
 misc
 static/temp/*.html
+__pycache__
+dvenv

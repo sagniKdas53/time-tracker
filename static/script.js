@@ -1,4 +1,5 @@
-const url = "http://127.0.0.1:5000/";
+const url = "https://chat-bot-att.herokuapp.com/";
+//"http://127.0.0.1:8000/";
 var tokenID = ""
 
 function keyEvent(event) {
