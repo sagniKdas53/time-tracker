@@ -320,8 +320,15 @@ async function adduserMsg() {
                     }),
                 });
                 const ress = await reqw.json();
-                console.log(ress['attendance']);
-                addbotMsgRTL(ress["attendance"]);
+                //console.log(ress['payload']);
+                var graph = document.createElement("div");
+                graph.innerHTML = ress['payload']
+                var ul = document.getElementById("chat-list");
+                var li = document.createElement("li");
+                li.appendChild(graph);
+                li.setAttribute("class", "bot");
+                ul.appendChild(li);
+                li.scrollIntoView({ behavior: "smooth" });
             }
             else {
                 console.log('here')
