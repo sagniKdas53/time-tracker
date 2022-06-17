@@ -90,8 +90,8 @@
         "Show my performance"
       ],
       "responses": [
-        "Navigating to attendance tracker",
-        "Attendance tracker: loading"
+        "Loading performance tracker, it will take a while",
+        "Attendance tracker loading: Please wait"
       ],
       "context_set": ["attendance_tracker"],
       "context_filter": ["unspecified"]
@@ -151,7 +151,7 @@
         "Show my info",
         "Who is logged in"
       ],
-      "responses": ["Showing user info", "Retrieving user info"],
+      "responses": ["Not implemented"],
       "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     },
@@ -172,7 +172,7 @@
     {
       "tag": "undo",
       "patterns": ["stop that", "stop", "undo", "cancel", "cancel that"],
-      "responses": ["Undoing last command", "Cancelling last command"],
+      "responses": ["Not implemented"],
       "context_set": ["undo_command"],
       "context_filter": ["unspecified"]
     },
@@ -225,6 +225,13 @@
         "time after hours"
       ],
       "responses": ["DNP"],
+      "context_set": ["unspecified"],
+      "context_filter": ["unspecified"]
+    },
+    {
+      "tag": "bulk_attendance_form",
+      "patterns": ["attendance form", "bulk attendance form"],
+      "responses": ["Showing Form"],
       "context_set": ["unspecified"],
       "context_filter": ["unspecified"]
     }

@@ -228,6 +228,7 @@ function other_visit() {
 
 async function adduserMsg() {
     var text = document.getElementById("chat-text").value;
+    document.getElementById("chat-text").value = "";
     if (text) {
         var msgSpan = document.createElement("div");
         msgSpan.innerHTML = text;
@@ -320,15 +321,20 @@ async function adduserMsg() {
                     }),
                 });
                 const ress = await reqw.json();
+                addbotMsgRTL(ress['payload']);
                 //console.log(ress['payload']);
-                var graph = document.createElement("div");
-                graph.innerHTML = ress['payload']
+                /*var graph = document.createElement("div");
+                var myRequest = new Request(url + ress['payload']);
+                fetch(myRequest).then(async function (response) {
+                    const text = await response.text();
+                    graph.innerHTML = text;
+                });
                 var ul = document.getElementById("chat-list");
                 var li = document.createElement("li");
                 li.appendChild(graph);
                 li.setAttribute("class", "bot");
                 ul.appendChild(li);
-                li.scrollIntoView({ behavior: "smooth" });
+                li.scrollIntoView({ behavior: "smooth" });*/
             }
             else {
                 console.log('here')
@@ -339,7 +345,6 @@ async function adduserMsg() {
             console.error(`ERROR: ${err}`);
         }
     }
-    document.getElementById("chat-text").value = "";
 }
 
 async function addbotMsg(msg) {

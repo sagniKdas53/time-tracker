@@ -5,3 +5,4 @@ model.tflearn.*
 training_data
 tflearn_logs
 misc
+static/temp/*.html

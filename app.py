@@ -7,19 +7,19 @@ import re
 import uuid
 
 import jwt
-import minify_html
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 import nltk
 import numpy as np
+import plotly.graph_objects as go
 from flask import Flask, make_response, request, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
+from plotly.subplots import make_subplots
 from werkzeug.security import check_password_hash, generate_password_hash
 
-# nltk.download('popular')
+if os.environ['deployment']:
+    nltk.download('popular')
 lemmatizer = WordNetLemmatizer()
 
 model = load_model('model.h5')
@@ -89,10 +89,12 @@ app.static_folder = 'static'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
-# os.environ['URI']
-app.config['SECRET_KEY'] = "1b308e20a6f3193e43c021bb1412808f"
-# os.environ['SECRET']
+if os.environ['deployment']:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['URI']
+    app.config['SECRET_KEY'] = os.environ['SECRET']
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
+    app.config['SECRET_KEY'] = "1b308e20a6f3193e43c021bb1412808f"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
@@ -304,10 +306,13 @@ def attendance_graph():
             elif day.status == 'overtime':
                 effort_data['extra_effort'] += day.hours
                 attendance_data['overtime'] += 1
-        fig = plt.figure(figsize=(5, 5), facecolor='white')
-        plt.subplots_adjust(left=0.05, right=0.95)
-        # pie chart
-        plt.subplot(211)
+        plot_dict = {'Type': list(attendance_data.keys()),
+                     'Days': list(attendance_data.values())}
+        fig = make_subplots(rows=2, cols=1, specs=[
+                            [{"type": "bar"}], [{"type": "pie"}]])
+        fig.append_trace(go.Bar(y=list(plot_dict.values())[1], x=list(plot_dict.values())[0], name='days', marker=dict(
+            color='LightSkyBlue')),
+            row=1, col=1)
         total = 42.5
         values = []
         for val in effort_data.values():
@@ -317,32 +322,19 @@ def attendance_graph():
             values.append(0)
         else:
             values.append(total)
-        print(values)
+        # print(values)
         labels = list(effort_data.keys())
         labels.append('unutilized time')
-        print(labels)
-        pie = plt.pie(values, labels=labels)
-        # bar graph
-        plt.subplot(212)
-        values = np.array(list(attendance_data.values()))
-        mylabels = list(attendance_data.keys())
-        bar = plt.bar(mylabels, values)
-        plt.title("Pie and Bar")
-        plt.ylabel("Days")
-        plt.xlabel("Work Type")
-        graph = mpld3.fig_to_html(
-            fig, template_type="simple", include_libraries=True)
-        f = open("misc/graph.html", "w")
-        f.write(graph)
-        f.close()
-        minified = minify_html.minify(
-            graph, minify_js=True, remove_processing_instructions=True)
-        f = open("misc/graph_minified.html", "w")
-        f.write(minified)
-        f.close()
+        # print(labels)
+        fig.append_trace(go.Pie(values=values, labels=labels),
+                         row=2, col=1)
+        fig.update_layout(width=900, title_text="Performance plots")
+        fig.show()
+        '''payload = f"static/temp/{str(uuid.uuid4()).split('-')[-1]}.html"
+        fig.write_html(payload)'''
         return make_response({
             'status': 'success',
-            'payload': minified
+            'payload': 'See the new tab for the graphs'
         })
 
 
