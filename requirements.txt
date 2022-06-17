@@ -8,4 +8,4 @@ plotly==5.8.2
 PyJWT==2.4.0
 Werkzeug==2.1.2
 gunicorn==19.9.0
-tensorflow==2.9.1
+tensorflow-cpu==2.9.1
