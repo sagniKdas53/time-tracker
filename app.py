@@ -94,15 +94,9 @@ def chatbot_response(msg):
     return res, ints
 
 
-'''def send_post_req(data):
-    global shared_var
-    headers = {'Content-type': 'text/html; charset=UTF-8'}
-    response = request.post(graph_url, data=data, headers=headers)
-    shared_var = response.response.json()'''
-
-
 def grapher(plot_dict, effort_data):
     global shared_var
+    # print('Graphing')
     fig = make_subplots(rows=2, cols=1, specs=[
         [{"type": "bar"}], [{"type": "pie"}]])
     fig.append_trace(go.Bar(y=list(plot_dict.values())[1], x=list(plot_dict.values())[0], name='days', marker=dict(
@@ -117,10 +111,10 @@ def grapher(plot_dict, effort_data):
         values.append(0)
     else:
         values.append(total)
-    # print(values)
+    # # print(values)
     labels = list(effort_data.keys())
     labels.append('unutilized time')
-    # print(labels)
+    # # print(labels)
     fig.append_trace(go.Pie(values=values, labels=labels),
                      row=2, col=1)
     fig.update_layout(width=900, title_text="Performance plots")
@@ -210,10 +204,10 @@ db.create_all()
 # making the default anon user
 try:
     anon = user_db.query.filter(user_db.name == 'anonymous').first().id
-    print(f'Anon id is: {anon}')
+    # print(f'Anon id is: {anon}')
 except AttributeError:
     anon = str(uuid.uuid4())
-    print(f'Anon id is: {anon}')
+    # print(f'Anon id is: {anon}')
     anon_usr = user_db(id=anon, name='anonymous', username='anonymous', password=anon,
                        email='anonymous@anonymous.anon', admin=False)
     db.session.add(anon_usr)
@@ -232,7 +226,7 @@ def serve(path):
 @app.route("/api/register", methods=['POST'])
 def bot_register():
     data = request.get_json()
-    print(data)
+    # print(data)
     # response, class_of_resp = chatbot_response(data['body'])
     if data['action'] == 'register' and data['password'] and data['email'] and data['name']:
         hashed_password = generate_password_hash(
@@ -274,11 +268,11 @@ def bot_login():
         return make_response('could not verify', 401, {'status': 'login info required"'})
     else:
         user_ent = user_db.query.filter_by(email=data['email']).first()
-        # print(f'user_ent.id={user_ent.id}')
+        # # print(f'user_ent.id={user_ent.id}')
         if check_password_hash(user_ent.password, data['password']):
             token = jwt.encode({'id': str(user_ent.id), 'exp': datetime.datetime.utcnow(
             ) + datetime.timedelta(days=7)}, app.config['SECRET_KEY'], "HS256")
-            print(token)
+            # print(token)
             return make_response({'email': str(user_ent.email), 'token': token, 'status': 'done'})
         else:
             return make_response({'email': str(user_ent.email), 'status': "Incorrect password"})
@@ -287,7 +281,7 @@ def bot_login():
 @app.route("/api/OODL", methods=['POST'])
 def OODForm_processor():
     data = request.get_json()
-    print(data)
+    # print(data)
     if not data or not data['reason'] or not data['start'] or\
             not data['end'] or not data['token'] or not data['cause'] or not data['hours']:
         return make_response('could not process request', 401, {'status': 'more info required"'})
@@ -296,7 +290,7 @@ def OODForm_processor():
         start_time_obj = datetime.datetime.strptime(data['start'], '%Y-%m-%d')
         end_time_obj = datetime.datetime.strptime(data['end'], '%Y-%m-%d')
         while start_time_obj <= end_time_obj:
-            print(start_time_obj)
+            # print(start_time_obj)
             cmd = attendance_sheet(id=str(uuid.uuid4()), date=start_time_obj,
                                    status=data['reason'], hours=data['hours'], reason=data['cause'], user=token['id'])
             db.session.add(cmd)
@@ -310,7 +304,7 @@ def OODForm_processor():
 @app.route("/api/timedelta", methods=['POST'])
 def timedelta():
     data = request.get_json()
-    print(data)
+    # print(data)
     if not data or not data['delta']:
         return make_response('could not process request', 401, {'status': 'more info required'})
     else:
@@ -334,7 +328,7 @@ def timedelta():
 @app.route("/api/graph", methods=['POST'])
 def attendance_graph():
     data = request.get_json()
-    print(data, type(data))
+    # print(data, type(data))
     if not data or not data['token']:
         return make_response('could not process request', 401, {'status': 'more info required'})
     else:
@@ -368,12 +362,12 @@ def attendance_graph():
         global req_counter
 
         if req_counter == 0:
-            print(data)
+            # print(data)
             t = Thread(target=grapher, args=(plot_dict, effort_data))
             t.setDaemon(True)
             t.start()
             req_counter = 1
-
+        global shared_var
         if shared_var:
             req_counter = 0
             shared_var = None
@@ -397,9 +391,9 @@ def get_bot_response():
             response = 'please re login'
     except jwt.exceptions.DecodeError as e:
         usr = anon
-        print(e)
-    print(f"\nUser ID: {usr}\nMessage: {data['body']}")
-    print(f"Bot:{response}\nClass: {class_of_resp}\n")
+        # print(e)
+    # print(f"\nUser ID: {usr}\nMessage: {data['body']}")
+    # print(f"Bot:{response}\nClass: {class_of_resp}\n")
     if class_of_resp[0]['intent'] == "give_leave_many_reason" or class_of_resp[0]['intent'] == "give_OOD_many_reason":
         if class_of_resp[0]['intent'] == "give_leave_many_reason":
             stat = "leave"
@@ -409,11 +403,11 @@ def get_bot_response():
             reason_pattern = r'''[ ']([0-9]*)['" ][a-zA-Z ]*[ ']([a-zA-Z ]*)['.]$'''
             result = re.search(reason_pattern, sanitized)
             days, reason = int(result.group(1)), result.group(2)
-            print(days, reason)
+            # print(days, reason)
             for i in range(days):
                 cmd = attendance_sheet(id=str(uuid.uuid4()), date=(called_on+datetime.timedelta(days=i)),
                                        status=stat, hours=24, reason=reason, user=usr)
-                print(cmd)
+                # print(cmd)
                 db.session.add(cmd)
         except AttributeError as e:
             response = "Input improperly formatted or incomplete. The '' are necessary."
@@ -422,10 +416,10 @@ def get_bot_response():
             reason_pattern = r"'([0-9.]*)'"
             result = re.search(reason_pattern, sanitized)
             hours = float(result.group(1))
-            print(hours)
+            # print(hours)
             cmd = attendance_sheet(id=str(uuid.uuid4()), date=called_on,
                                    status='attendance', hours=hours, reason='no reason', user=usr)
-            print(cmd)
+            # print(cmd)
             db.session.add(cmd)
         except AttributeError as e:
             response = "Input improperly formatted or incomplete. The '' are necessary."
