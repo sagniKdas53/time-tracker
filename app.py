@@ -10,13 +10,13 @@ from threading import Thread
 import jwt
 import nltk
 import numpy as np
-# import plotly.graph_objects as go
+import plotly.graph_objects as go
 from flask import Flask, make_response, request, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
-# from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots
 from werkzeug.security import check_password_hash, generate_password_hash
 
 try:
@@ -33,7 +33,7 @@ model = load_model('model.h5')
 intents = json.loads(open('data.json').read())
 words = pickle.load(open('texts.pkl', 'rb'))
 classes = pickle.load(open('labels.pkl', 'rb'))
-graph_url = 'https://internship-forum.herokuapp.com/graph'
+'''graph_url = 'https://internship-forum.herokuapp.com/graph\''''
 shared_var = None
 req_counter = 0
 
@@ -94,11 +94,36 @@ def chatbot_response(msg):
     return res, ints
 
 
-def send_post_req(data):
+'''def send_post_req(data):
     global shared_var
     headers = {'Content-type': 'text/html; charset=UTF-8'}
     response = request.post(graph_url, data=data, headers=headers)
-    shared_var = response.response.json()
+    shared_var = response.response.json()'''
+
+
+def grapher(plot_dict, effort_data):
+    fig = make_subplots(rows=2, cols=1, specs=[
+        [{"type": "bar"}], [{"type": "pie"}]])
+    fig.append_trace(go.Bar(y=list(plot_dict.values())[1], x=list(plot_dict.values())[0], name='days', marker=dict(
+        color='LightSkyBlue')),
+        row=1, col=1)
+    total = 42.5
+    values = []
+    for val in effort_data.values():
+        values.append(val)
+        total -= val
+    if total < 0:
+        values.append(0)
+    else:
+        values.append(total)
+    # print(values)
+    labels = list(effort_data.keys())
+    labels.append('unutilized time')
+    # print(labels)
+    fig.append_trace(go.Pie(values=values, labels=labels),
+                     row=2, col=1)
+    fig.update_layout(width=900, title_text="Performance plots")
+    fig.show()
 
 
 app = Flask(__name__)
@@ -339,14 +364,12 @@ def attendance_graph():
                      'Days': list(attendance_data.values())}
         # send plot_dict, effort_data to https://internship-forum.herokuapp.com/graph
         global req_counter
-        data.update({'plot': plot_dict})
-        data.update({'effort': effort_data})
         if shared_var:
             req_counter = 0
             shared_var = None
         if req_counter == 0:
             print(data)
-            t = Thread(target=send_post_req, args=(data))
+            t = Thread(target=grapher, args=(plot_dict, effort_data))
             t.setDaemon(True)
             t.start()
             req_counter = 1
