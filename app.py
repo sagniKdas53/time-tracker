@@ -9,13 +9,13 @@ import uuid
 import jwt
 import nltk
 import numpy as np
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 from flask import Flask, make_response, request, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
-from plotly.subplots import make_subplots
+# from plotly.subplots import make_subplots
 from werkzeug.security import check_password_hash, generate_password_hash
 
 try:
@@ -326,7 +326,7 @@ def attendance_graph():
                 attendance_data['overtime'] += 1
         plot_dict = {'Type': list(attendance_data.keys()),
                      'Days': list(attendance_data.values())}
-        fig = make_subplots(rows=2, cols=1, specs=[
+        '''fig = make_subplots(rows=2, cols=1, specs=[
                             [{"type": "bar"}], [{"type": "pie"}]])
         fig.append_trace(go.Bar(y=list(plot_dict.values())[1], x=list(plot_dict.values())[0], name='days', marker=dict(
             color='LightSkyBlue')),
@@ -347,9 +347,7 @@ def attendance_graph():
         fig.append_trace(go.Pie(values=values, labels=labels),
                          row=2, col=1)
         fig.update_layout(width=900, title_text="Performance plots")
-        fig.show()
-        '''payload = f"static/temp/{str(uuid.uuid4()).split('-')[-1]}.html"
-        fig.write_html(payload)'''
+        fig.show()'''
         return make_response({
             'status': 'success',
             'payload': 'See the new tab for the graphs'
