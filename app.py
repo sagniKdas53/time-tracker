@@ -102,6 +102,7 @@ def chatbot_response(msg):
 
 
 def grapher(plot_dict, effort_data):
+    global shared_var
     fig = make_subplots(rows=2, cols=1, specs=[
         [{"type": "bar"}], [{"type": "pie"}]])
     fig.append_trace(go.Bar(y=list(plot_dict.values())[1], x=list(plot_dict.values())[0], name='days', marker=dict(
@@ -124,6 +125,7 @@ def grapher(plot_dict, effort_data):
                      row=2, col=1)
     fig.update_layout(width=900, title_text="Performance plots")
     fig.show()
+    shared_var = 1
 
 
 app = Flask(__name__)
@@ -362,11 +364,9 @@ def attendance_graph():
                 attendance_data['overtime'] += 1
         plot_dict = {'Type': list(attendance_data.keys()),
                      'Days': list(attendance_data.values())}
-        # send plot_dict, effort_data to https://internship-forum.herokuapp.com/graph
+        # send plot_dict, effort_data to a thread to plot
         global req_counter
-        if shared_var:
-            req_counter = 0
-            shared_var = None
+
         if req_counter == 0:
             print(data)
             t = Thread(target=grapher, args=(plot_dict, effort_data))
@@ -374,6 +374,9 @@ def attendance_graph():
             t.start()
             req_counter = 1
 
+        if shared_var:
+            req_counter = 0
+            shared_var = None
         return make_response({
             'status': 'success',
             'payload': 'See the new tab for the graphs'
